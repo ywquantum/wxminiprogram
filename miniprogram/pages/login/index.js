@@ -53,29 +53,29 @@ Page({
   resignInto() {
     let name = this.data.userNameInput;
     let password = this.data.userPasswordInput;
-    // if (name == 'admin' && password == 'admin') {
+    if (name == 'admin' && password == 'admin') {
       wx.reLaunch({
         url: '../index/index' //或者url: '/page/person/goldcoin/index'
       })
-    // } else if (name == '') {
-    //   wx.showToast({
-    //     title: '请输入手机号/登录名',
-    //     icon: 'none',
-    //     duration: 2000
-    //   });
-    // } else if (password == '') {
-    //   wx.showToast({
-    //     title: '请输入登录密码',
-    //     icon: 'none',
-    //     duration: 2000
-    //   });
-    // } else {
-    //   wx.showToast({
-    //     title: '密码或账户错误',
-    //     icon: 'none',
-    //     duration: 2000
-    //   });
-    // }
+    } else if (name == '') {
+      wx.showToast({
+        title: '请输入手机号/登录名',
+        icon: 'none',
+        duration: 2000
+      });
+    } else if (password == '') {
+      wx.showToast({
+        title: '请输入登录密码',
+        icon: 'none',
+        duration: 2000
+      });
+    } else {
+      wx.showToast({
+        title: '密码或账户错误',
+        icon: 'none',
+        duration: 2000
+      });
+    }
   },
 
   /**
