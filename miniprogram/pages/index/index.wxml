@@ -1,0 +1,11 @@
+<view class="indexAllContainer">
+  <event wx:if="{{selected == 0}}"></event>
+  <inspection wx:if="{{selected == 1}}"></inspection>
+</view>
+<cover-view class="tab-bar">
+  <cover-view class="tab-bar-border"></cover-view>
+  <cover-view wx:for="{{listTab}}" wx:key="index" class="tab-bar-item" data-path="{{item.pagePath}}" data-index="{{index}}" bindtap="switchTab">
+    <cover-image class="tab-bar-coverimage" src="{{selected === index ? item.selectedIconPath : item.iconPath}}"></cover-image>
+    <cover-view class="tab-bar-coverview" style="color: {{selected === index ? selectedColor : color}}">{{item.text}}</cover-view>
+  </cover-view>
+</cover-view>

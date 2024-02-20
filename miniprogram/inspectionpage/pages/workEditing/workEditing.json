@@ -1,0 +1,8 @@
+{
+  "component": true,
+  "usingComponents": {
+    "time-picker": "../../../components/timePicker/timePicker",
+    "selectComponents": "../../../components/selectComponents/selectComponents",
+    "addVideoOrImg": "../../../components/addVideoOrImg/addVideoOrImg"
+  }
+}

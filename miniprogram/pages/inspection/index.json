@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "menu": "../../components/menu/menu",
+    "textExpandsion": "../../components/textExpandsion/textExpandsion"
+  },
+  "component": true
+}

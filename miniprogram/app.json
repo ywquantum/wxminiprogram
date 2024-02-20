@@ -1,0 +1,39 @@
+{
+  "pages": [
+    "pages/login/index",
+    "pages/index/index",
+    "pages/askLeave/askLeave"
+  ],
+  "subpackages": [{
+      "root": "eventpage",
+      "name": "eventpageName",
+      "pages": [
+        "pages/eventDetails/eventDetails"
+      ]
+    },
+    {
+      "root": "inspectionpage",
+      "name": "inspectionpageName",
+      "pages": [
+        "pages/inspectionDetails/inspectionDetails",
+        "pages/workOrderDetails/workOrderDetails",
+        "pages/isoverDetails/isoverDetails",
+        "pages/workEditing/workEditing"
+      ]
+    }
+  ],
+  "window": {
+    "backgroundColor": "#F6F6F6",
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#F6F6F6",
+    "navigationBarTitleText": "弈小",
+    "navigationBarTextStyle": "black"
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于小程序位置进行测试人物行进路线"
+    }
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2"
+}

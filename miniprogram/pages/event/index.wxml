@@ -1,0 +1,36 @@
+<view>
+  <menu menuValue="{{ menulist }}" menuTop="{{ menuTopVal }}" bind:menuListVal="menuFun"></menu>
+  <view wx:if="{{containerMenuList == 0}}" class="eventBox">
+    <view wx:for="{{waitEvent}}" wx:key="index" class='eventListBox'>
+      <view class="eventListTTline">
+        <view class="eventListTTleft">{{ item.type }}</view>
+        <view class="eventListTTright">{{ item.time }}</view>
+      </view>
+      <view class="eventListBaseLine">名称：{{ item.corporation }}</view>
+      <view class="eventListBaseLine">位置：{{ item.position }}</view>
+      <view class="eventListDCline">
+        <view class="eventListDClineleft">说明：{{ item.Instructions }}</view>
+        <view wx:if="{{item.status}}" class="eventListDClineright eventWaitText" data-index="{{ item }}" bindtap="eventSwitch">待响应</view>
+        <view wx:else="{{!item.status}}" class="eventListDClineright eventDoneText" data-index="{{ item }}" bindtap="eventSwitch">处理中</view>
+      </view>
+      <view class="eventListSlideLine"></view>
+      <view class="eventListBaseLine">负责人：{{ item.charger }}</view>
+    </view>
+  </view>
+  <view wx:if="{{containerMenuList == 1}}" class="eventBox">
+    <view wx:for="{{doneEvent}}" wx:key="index" class='eventListBox'>
+      <view class="eventListTTline">
+        <view class="eventListTTleft">{{ item.type }}</view>
+        <view class="eventListTTright">{{ item.time }}</view>
+      </view>
+      <view class="eventListBaseLine">名称：{{ item.corporation }}</view>
+      <view class="eventListBaseLine">位置：{{ item.position }}</view>
+      <view class="eventListDCline">
+        <view class="eventListDClineleft">说明：{{ item.Instructions }}</view>
+        <view class="eventListGotoBtn" data-index="{{ item }}" bindtap="eventSwitch">></view>
+      </view>
+      <view class="eventListSlideLine"></view>
+      <view class="eventListBaseLine">负责人：{{ item.charger }}</view>
+    </view>
+  </view>
+</view>

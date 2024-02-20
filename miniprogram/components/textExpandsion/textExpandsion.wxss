@@ -1,0 +1,72 @@
+/* components/textExpandsion/textExpandsion.wxss */
+.text-expansion {
+  display: flex;
+}
+
+.text-expansion__button {
+  position: relative;
+  font-size: 24rpx;
+  font-weight: bold;
+  float: right;
+  clear: both;
+  line-height: 42rpx;
+}
+
+.text-expansion__button::before {
+  content: '...';
+  margin-right: 8rpx;
+}
+
+.text-expansion__button::after {
+  content: '';
+  display: inline-block;
+  margin-bottom: 2rpx;
+  margin-left: 4rpx;
+  transition: transform 0.3s;
+  border-top: 10rpx solid #000000;
+  border-left: 8rpx solid transparent;
+  border-right: 8rpx solid transparent;
+}
+
+.text-expansion__text {
+  position: relative;
+  width: 100%;
+  font-size: 28rpx;
+  color: #000000;
+  overflow: hidden;
+  line-height: 1.5;
+  max-height: 6em;
+  text-align: justify;
+}
+
+.text-expansion__text::before {
+  content: '';
+  float: right;
+  height: 100%;
+  margin-bottom: -40rpx;
+}
+
+.text-expansion__text::after {
+  content: '';
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  box-shadow: inset calc(120rpx - 100vw) calc(1.45em - 100vh) 0 0 #B9B9B9;
+  margin-left: -120rpx;
+}
+
+.text-expansion__text--expand {
+  max-height: none;
+}
+
+.text-expansion__text--expand::after {
+  visibility: hidden;
+}
+
+.text-expansion__text--expand>.text-expansion__button::before {
+  visibility: hidden;
+}
+
+.text-expansion__text--expand>.text-expansion__button::after {
+  transform: rotate(180deg);
+}

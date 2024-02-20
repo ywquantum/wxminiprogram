@@ -1,0 +1,54 @@
+/* components/addVideoOrImg/addVideoOrImg.wxss */
+
+/* 上传的图片 */
+.img-list {
+  width: 100%;
+  margin-top: 10px;
+  margin-left: 5%;
+  display: flex;
+  flex-wrap: wrap;
+  box-sizing: border-box;
+}
+
+.img-li {
+  width: 200rpx;
+  height: 200rpx;
+  margin-right: 39rpx;
+  margin-bottom: 23rpx;
+}
+
+.img-li:first-child {
+  margin-right: 0;
+}
+
+.uploading-icon {
+  width: 100%;
+  height: 100%;
+}
+
+.icon-delete {
+  width: 28rpx !important;
+  height: 28rpx !important;
+  position: relative;
+  float: right;
+  margin-top: -229rpx;
+  margin-right: -15rpx;
+  z-index: 99;
+}
+
+.icon-deletes {
+  width: 28rpx !important;
+  height: 28rpx !important;
+  position: relative;
+  float: right;
+  margin-top: -9rpx;
+  margin-left: -10rpx;
+  margin-right: 29rpx;
+  z-index: 99;
+}
+
+.uploading-icon-add {
+  width: 50% !important;
+  height: 50% !important;
+  margin: 25% 0 0 25%;
+}

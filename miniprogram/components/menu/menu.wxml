@@ -1,0 +1,6 @@
+<view class="menuContainerBox" style="top: {{ menuTop }}">
+  <view wx:for="{{ menuValue }}" wx:key="index" class="{{ selectVal == index ? 'menuBaseList_high' : 'menuBaseList' }}" data-index="{{index}}" bindtap="switchMenu">
+    {{ item }}
+    <view class="{{ selectVal == index  ? 'menuHighLine' : 'menuHighLine_none' }}"></view>
+  </view>
+</view>

@@ -1,0 +1,7 @@
+<!--inspectionpage/pages/isoverDetails/isoverDetails.wxml-->
+<view class="overContainer">
+  <textExpandsion text="{{ instructions }}"></textExpandsion>
+  <view class="inspectionImgBoxLine">
+    <view wx:for="{{ imgs }}" wx:key="index" class="inspection_img"></view>
+  </view>
+</view>

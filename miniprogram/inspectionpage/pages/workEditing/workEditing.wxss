@@ -1,0 +1,315 @@
+.eventDetailsContainer {
+  width: 100%;
+  height: calc(100% - 48px - env(safe-area-inset-bottom));
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  /* padding: 10px; */
+  box-sizing: border-box;
+}
+
+.eventDetailsPull {
+  width: 184px;
+  height: 37px;
+  line-height: 37px;
+  position: absolute;
+  bottom: env(safe-area-inset-bottom);
+  left: calc(50% - 92px);
+  border-radius: 4px;
+  background-color: #1F984D;
+  color: #ffffff;
+  font-size: 15px;
+  text-align: center;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.eventDetailsPullPage2 {
+  width: 90%;
+  height: 37px;
+  line-height: 37px;
+  position: absolute;
+  bottom: env(safe-area-inset-bottom);
+  margin-bottom: 5px;
+  margin-left: 5%;
+  display: flex;
+  justify-content: space-around;
+}
+
+.askLeaveTimeList {
+  width: 100%;
+  height: 36px;
+  margin-bottom: 20px;
+  display: flex;
+  position: relative;
+}
+
+.askLeaveTimeText {
+  width: 62px;
+  font-size: 13px;
+  line-height: 36px;
+}
+
+.picker {
+  width: calc(100% - 62px);
+  height: 36px;
+  line-height: 36px;
+  border: 1px solid #919191;
+  border-radius: 4px;
+  padding-left: 10px;
+}
+
+.askPointText {
+  font-size: 16px;
+  position: absolute;
+  right: 10px;
+  top: 6px;
+}
+
+.eventDetailsInput {
+  width: calc(100% - 62px);
+  border: 1px solid #ababab;
+  padding: 7px 5px;
+  box-sizing: border-box;
+  border-radius: 4px;
+}
+
+.delBtn {
+  width: 44%;
+  height: 37px;
+  line-height: 37px;
+  background-color: #ff0000;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  border-radius: 4px;
+  color: #ffffff;
+}
+
+.saveBtn {
+  width: 44%;
+  height: 37px;
+  line-height: 37px;
+  background-color: #1F984D;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  border-radius: 4px;
+  color: #ffffff;
+}
+
+.workNameInput {
+  width: 100%;
+  height: 32px;
+  font-size: 14px;
+  border: 1px solid #ababab;
+  padding: 7px 5px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+.eventDetailsInput {
+  width: 100%;
+  font-size: 14px;
+  border: 1px solid #ababab;
+  padding: 7px 5px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+.workBaseLine {
+  width: 90%;
+  margin-left: 5%;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.workTimeList {
+  width: 90%;
+  height: 36px;
+  margin-left: 5%;
+  border: 1px solid #919191;
+  border-radius: 4px;
+  padding-left: 10px;
+  box-sizing: border-box;
+  margin-top: 10px;
+  position: relative;
+}
+
+.workPointLeft {
+  font-size: 16px;
+  position: absolute;
+  right: 10px;
+  top: 6px;
+}
+
+.workEditingChooseList {
+  width: 90%;
+  height: auto;
+  margin-left: 5%;
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.workEditingSelectBox {
+  width: 30%;
+  height: auto;
+  position: relative;
+}
+
+.flexJust {
+  display: flex;
+  justify-content: space-between;
+}
+
+.workBaseBorder {
+  line-height: 36px;
+  border: 1px solid #919191;
+  border-radius: 4px;
+  padding-left: 10px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.pupContent {
+  width: 100%;
+  background: #F6F6F6;
+  position: absolute;
+  bottom: 0;
+  box-shadow: 0 0 10rpx #333;
+  height: 0;
+  z-index: 999;
+}
+
+.showContent {
+  display: block;
+}
+
+.hideContent {
+  display: none;
+}
+
+.open {
+  animation: slideContentUp 0.5s ease-in both;
+  /* animation-fill-mode: both 动画将会执行 forwards 和 backwards 执行的动作。 */
+}
+
+.close {
+  animation: slideContentDown 0.5s ease-in both;
+  /* animation-fill-mode: both 动画将会执行 forwards 和 backwards 执行的动作。 */
+}
+
+.pupContentBG {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+}
+
+.showBG {
+  display: block;
+}
+
+.hideBG {
+  display: none;
+}
+
+.openBG {
+  animation: slideBGtUp 0.5s ease-in both;
+  /* animation-fill-mode: both 动画将会执行 forwards 和 backwards 执行的动作。 */
+}
+
+.closeBG {
+  animation: slideBGDown 0.5s ease-in both;
+  /* animation-fill-mode: both 动画将会执行 forwards 和 backwards 执行的动作。 */
+}
+
+
+/* 弹出或关闭动画来动态设置内容高度 */
+
+@keyframes slideBGtUp {
+  from {
+    background: transparent;
+  }
+
+  to {
+    background: rgba(0, 0, 0, 0.1);
+  }
+}
+
+@keyframes slideBGDown {
+  from {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  to {
+    background: transparent;
+  }
+}
+
+
+/* 弹出或关闭动画来动态设置内容高度 */
+
+@keyframes slideContentUp {
+  from {
+    height: 0;
+  }
+
+  to {
+    height: 360px;
+  }
+}
+
+@keyframes slideContentDown {
+  from {
+    height: 360px;
+  }
+
+  to {
+    height: 0;
+  }
+}
+
+.workAddContainer {
+  width: 100%;
+  height: 360px;
+  background-color: #F6F6F6;
+}
+
+.workaddLine {
+  width: 90%;
+  height: 32px;
+  line-height: 32px;
+  background-color: #777777;
+  margin: 5px 0 5px 5%;
+  border-radius: 4px;
+  padding: 0 10px;
+  box-sizing: border-box;
+  color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+}
+
+.workSlideLine {
+  width: 90%;
+  border-bottom: 1px solid #919191;
+  margin: 10px 0 10px 5%;
+}
+
+.addNewInspetionLine {
+  width: 90%;
+  height: 36px;
+  line-height: 36px;
+  text-align: center;
+  margin-left: 5%;
+  font-size: 14px;
+  font-weight: 700;
+  background-color: #888888;
+  color: #ffffff;
+  border-radius: 4px;
+}

@@ -1,0 +1,66 @@
+/* pages/askLeave/askLeave.wxss */
+.eventDetailsContainer {
+  width: 100%;
+  height: calc(100% - 48px - env(safe-area-inset-bottom));
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.eventDetailsPull {
+  width: 184px;
+  height: 37px;
+  line-height: 37px;
+  position: absolute;
+  bottom: env(safe-area-inset-bottom);
+  left: calc(50% - 92px);
+  border-radius: 4px;
+  background-color: #1F984D;
+  color: #ffffff;
+  font-size: 15px;
+  text-align: center;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.askLeaveTimeList {
+  width: 100%;
+  height: 36px;
+  margin-bottom: 20px;
+  display: flex;
+  position: relative;
+}
+
+.askLeaveTimeText {
+  width: 62px;
+  font-size: 13px;
+  line-height: 36px;
+}
+
+.picker {
+  width: calc(100% - 62px);
+  height: 36px;
+  line-height: 36px;
+  border: 1px solid #919191;
+  border-radius: 4px;
+  padding-left: 10px;
+}
+
+.askPointText {
+  font-size: 16px;
+  position: absolute;
+  right: 10px;
+  top: 6px;
+}
+
+.eventDetailsInput {
+  width: calc(100% - 62px);
+  border: 1px solid #ababab;
+  padding: 7px 5px;
+  box-sizing: border-box;
+  border-radius: 4px;
+}

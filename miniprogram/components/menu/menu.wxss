@@ -1,0 +1,46 @@
+/* components/menu/menu.wxss */
+.menuContainerBox {
+  width: 100%;
+  height: 36px;
+  display: flex;
+  position: fixed;
+  left: 0;
+  background-color: #F6F6F6;
+  z-index: 99;
+}
+
+.menuBaseList {
+  width: 50%;
+  text-align: center;
+  line-height: 31px;
+  color: #333;
+  position: relative;
+}
+
+.menuBaseList_high {
+  width: 50%;
+  text-align: center;
+  line-height: 31px;
+  color: #1F984D;
+  position: relative;
+}
+
+.menuHighLine {
+  width: 50px;
+  height: 5px;
+  position: absolute;
+  bottom: 0px;
+  left: calc(50% - 25px);
+  background-color: #1F984D;
+  border-radius: 4px;
+}
+
+.menuHighLine_none {
+  width: 0px;
+  height: 0px;
+  position: absolute;
+  bottom: 0px;
+  left: calc(50% - 25px);
+  background-color: #1F984D;
+  border-radius: 4px;
+}

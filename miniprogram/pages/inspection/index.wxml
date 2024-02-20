@@ -1,0 +1,92 @@
+<menu menuValue="{{ menulist }}" menuTop="{{ menuTopVal }}" bind:menuListVal="menuFun"></menu>
+<view class="askLeave">
+  <view wx:if="{{containerMenuList == 0}}" class="askLeaveBtn" bindtap="akyleaveFun">请假</view>
+  <view wx:if="{{containerMenuList == 2}}" class="askLeaveBtn" bindtap="addWorkFun">创建</view>
+</view>
+<view wx:if="{{containerMenuList == 0}}" class="inspection_list">
+  <view wx:for="{{waitEvent}}" wx:key="index" class='inspectionListBox'>
+    <view class="inspectionBaseLine">{{ item.corporation }}</view>
+    <view class="inspectionInstructionsLine">
+      <textExpandsion text="{{ item.Instructions }}"></textExpandsion>
+    </view>
+    <view class="inspectionImgBoxLine">
+      <view wx:for="{{ item.imgs }}" wx:key="index" class="inspection_img"></view>
+    </view>
+    <view wx:if="{{ item.type == 'inspection' }}">
+      <view wx:if="{{item.status}}" class="inspectionDoubleLine">
+        <view class="inspectionTimesLine">
+          <view>开始时间：{{ item.time }}</view>
+          <view wx:if="{{ item.endtime }}" style="margin-top: 5px;">结束时间：{{ item.endtime }}</view>
+        </view>
+        <view class="inspectionBtn" data-index="{{ item }}" bindtap="startInspection">开始巡检</view>
+      </view>
+      <view wx:else="{{!item.status}}" class="inspectionDoubleLine">
+        <view class="inspectionTimesLineHight">
+          <view>开始时间：{{ item.time }}</view>
+          <view wx:if="{{ item.endtime }}" style="margin-top: 5px;">结束时间：{{ item.endtime }}</view>
+        </view>
+        <view class="inspectionBtnHight" data-index="{{ item }}" bindtap="startInspection">开始巡检</view>
+      </view>
+    </view>
+    <view wx:if="{{ item.type == 'workorder'}}">
+      <view class="inspectionDoubleLine">
+        <view class="inspectionTimesLine">
+          <view>开始时间：{{ item.time }}</view>
+          <view wx:if="{{ item.endtime }}" style="margin-top: 5px;">结束时间：{{ item.endtime }}</view>
+        </view>
+        <view class="inspectionBtn" data-index="{{ item }}" bindtap="startWorkorder">开始处理</view>
+      </view>
+    </view>
+  </view>
+</view>
+<view wx:elif="{{containerMenuList == 1}}" class="inspection_list">
+  <view wx:for="{{doneEvent}}" wx:key="index" class='inspectionListBox'>
+    <view class="inspectionBaseLine">{{ item.corporation }}</view>
+    <view class="inspectionInstructionsLine">
+      <textExpandsion text="{{ item.Instructions }}"></textExpandsion>
+    </view>
+    <view wx:if="{{ !item.status }}" class="workDoneLine">
+      未完成
+    </view>
+    <view wx:if="{{ item.status }}" class="workDoneLine">
+      <view>已完成</view>
+      <view data-index="{{ item }}" bindtap="endWorkLook">></view>
+    </view>
+  </view>
+</view>
+<view wx:else="{{containerMenuList == 2}}" class="inspection_list">
+  <view wx:for="{{workorderData}}" wx:key="index" class="inspectionListBox">
+    <view class="inspectionBaseLine">{{ item.corporation }}</view>
+    <view class="inspectionInstructionsLine">
+      <textExpandsion text="{{ item.Instructions }}"></textExpandsion>
+    </view>
+    <view class="inspectionImgBoxLine">
+      <view wx:for="{{ item.imgs }}" wx:key="index" class="inspection_img"></view>
+    </view>
+    <view wx:if="{{ item.type == '巡检工单' }}">
+      <view class="workBaseTextMargin">任务周期：</view>
+      <view class="workBaseSide">
+        <view class="workBaseTextMargin">{{ item.taskcycle[0] }}</view>
+        <view class="workBaseTextMarginRight">{{ item.taskcycle[1] }}</view>
+      </view>
+      <view class="workBaseTextMargin">{{ item.repeat }}</view>
+      <view class="workBaseTextMargin">起始时间：</view>
+      <view class="workBaseSide" wx:for="{{ item.starttime }}" wx:key="index">
+        <view class="workBaseTextMargin">{{ item[0] }}</view>
+        <view class="workBaseTextMarginRight">{{ item[1] }}</view>
+      </view>
+    </view>
+    <view wx:if="{{ item.type == '普通工单' }}">
+      <view class="workBaseTextMargin">起始时间：</view>
+      <view class="workBaseSide" wx:for="{{ item.starttime }}" wx:key="index">
+        <view class="workBaseTextMargin">{{ item[0] }}</view>
+        <view class="workBaseTextMarginRight">{{ item[1] }}</view>
+      </view>
+    </view>
+    <view class="workBaseTextMargin">{{ item.people[0] }} > {{ item.people[1] }} > {{ item.people[2] }}</view>
+    <view class="workBaseSide">
+      <view class="workBaseTextMargin">{{ item.status }}</view>
+      <view class="workBaseTextMarginRight" data-index="{{ item }}" bindtap="workOrderFun">></view>
+    </view>
+  </view>
+</view>

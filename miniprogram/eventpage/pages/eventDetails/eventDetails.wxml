@@ -1,0 +1,7 @@
+<!--pages/eventDetails/eventDetails.wxml-->
+<view class="eventDetailsContainer">
+  <textarea class="eventDetailsInput" maxlength="-1" placeholder="请填写处理说明" auto-focus="true" />
+  <addVideoOrImg></addVideoOrImg>
+</view>
+
+<view class="eventDetailsPull" bindtap="pullContainer">提交</view>

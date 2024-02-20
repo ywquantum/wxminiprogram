@@ -1,0 +1,25 @@
+<!--components/addVideoOrImg/addVideoOrImg.wxml-->
+<!-- 上传 S -->
+<view class="img-list">
+  <!-- 上传列表 -->
+  <view class="upload-video">
+    <block wx:if="{{src != ''}}">
+      <video src="{{src}}" class="img-li"></video>
+      <image class="icon-deletes" src="../../images/icon-delete.png" bindtap="deleteVideo"></image>
+    </block>
+  </view>
+  <block wx:for="{{imgList}}" wx:key="index">
+    <view class="img-li">
+      <view class="img-li" bindtap="previewImg">
+        <image class="uploading-icon" data-index="{{index}}" src="{{item}}"></image>
+      </view>
+      <image class="icon-delete" src="../../images/icon-delete.png" bindtap="deleteImg"></image>
+    </view>
+  </block>
+  <!-- 上传图片/视频 S -->
+  <view class="img-li" wx:if="{{imgList.length<=18}}" bindtap="actioncnt">
+    <image class="uploading-icon-add" src="../../images/icon-add-images.png"></image>
+  </view>
+  <!-- 上传图片/视频 E -->
+</view>
+<!-- 上传 E -->

@@ -1,0 +1,92 @@
+<!--inspectionpage/pages/workEditing/workEditing.wxml-->
+<view class="eventDetailsContainer">
+  <view class="workBaseLine">
+    <selectComponents nowId="{{partId}}" nameList="{{partits}}" nowName="{{partId}}" placeholder="请选择部门" bind:handleChange="partFruit">
+    </selectComponents>
+  </view>
+  <view class="workBaseLine">
+    <selectComponents nowId="{{workTypeId}}" nameList="{{workTypeits}}" nowName="{{workTypeId}}" placeholder="请选择部门" bind:handleChange="workTypeFruit">
+    </selectComponents>
+  </view>
+  <view class="workBaseLine">
+    <textarea class="workNameInput" value="{{textName}}" maxlength="-1" placeholder="请输入巡检工单名称" />
+  </view>
+  <view class="workBaseLine">
+    <textarea class="eventDetailsInput" maxlength="-1" value="{{textContainer}}" placeholder="请输入巡检工单内容说明（what、why、how）" />
+  </view>
+  <addVideoOrImg></addVideoOrImg>
+
+  <view wx:if="{{ workBaseType }}">
+    <view class="workBaseLine">起始时间：</view>
+    <view class="workTimeList">
+      <time-picker mode="{{mode}}" dateTime="{{ timeForstart }}" placeholder="请选择时间" class="workTimesUpdata" bind:onPickerChange="onPickerChange"></time-picker>
+      <view class="workPointLeft">></view>
+    </view>
+    <view class="workTimeList">
+      <time-picker mode="{{mode}}" dateTime="{{ timeForstartTwo }}" placeholder="请选择时间" class="workTimesUpdata" bind:onPickerChange="onPickerChange"></time-picker>
+      <view class="workPointLeft">></view>
+    </view>
+  </view>
+  <view wx:if="{{ !workBaseType }}">
+    <view class="workBaseLine">任务周期：</view>
+    <view class="workTimeList">
+      <time-picker mode="{{mode}}" dateTime="{{ questForstart }}" placeholder="请选择时间" class="workTimesUpdata" bind:onPickerChange="onPickerChange"></time-picker>
+      <view class="workPointLeft">></view>
+    </view>
+    <view class="workTimeList">
+      <time-picker mode="{{mode}}" dateTime="{{ questForstartTwo }}" placeholder="请选择时间" class="workTimesUpdata" bind:onPickerChange="onPickerChange"></time-picker>
+      <view class="workPointLeft">></view>
+    </view>
+    <view class="workBaseLine flexJust workBaseBorder" catchtap='clickPup'>
+      <view>{{ repeatDate }}</view>
+      <view style="margin-right: 10px;">></view>
+    </view>
+    <view class="workBaseLine">起始时间：</view>
+    <view class="workInspetionLine" wx:for="{{ addNewDateList }}" wx:key="index">
+      <view class="workTimeList">
+        <time-picker mode="{{mode}}" dateTime="{{ item.timeStart }}" placeholder="请选择时间" class="workTimesUpdata" bind:onPickerChange="onPickerChange"></time-picker>
+        <view class="workPointLeft">></view>
+      </view>
+      <view class="workTimeList">
+        <time-picker mode="{{mode}}" dateTime="{{ item.endStart }}" placeholder="请选择时间" class="workTimesUpdata" bind:onPickerChange="onPickerChange"></time-picker>
+        <view class="workPointLeft">></view>
+      </view>
+      <view class="workSlideLine"></view>
+    </view>
+    <view class="addNewInspetionLine" bindtap="addNewListFun">+新增</view>
+  </view>
+
+  <view class="workEditingChooseList">
+    <view class="workEditingSelectBox">
+      <selectComponents nowId="{{btmPartId}}" nameList="{{btmPartits}}" nowName="{{btmPartId}}" placeholder="请选择部门" bind:handleChange="btmPartFruit">
+      </selectComponents>
+    </view>
+    <view class="workEditingSelectBox">
+      <selectComponents nowId="{{btmWZId}}" nameList="{{btmWZits}}" nowName="{{btmWZId}}" placeholder="请选择职务" bind:handleChange="btmPartFruit">
+      </selectComponents>
+    </view>
+    <view class="workEditingSelectBox">
+      <selectComponents nowId="{{btmPeopleId}}" nameList="{{btmPeopleits}}" nowName="{{btmPeopleId}}" placeholder="请选择人员" bind:handleChange="btmPartFruit">
+      </selectComponents>
+    </view>
+  </view>
+</view>
+
+<view class="eventDetailsPull" bindtap="pullContainer" wx:if="{{ pageStatus }}">提交</view>
+<view wx:if="{{ !pageStatus }}" class="eventDetailsPullPage2">
+  <view class="delBtn" bindtap="pullContainer">删除</view>
+  <view class="saveBtn" bindtap="pullContainer">保存</view>
+</view>
+
+<!-- 底部弹窗动画的内容 -->
+<view class='pupContent {{click? "showContent": "hideContent"}} {{option? "open": "close"}}' hover-stop-propagation='true'>
+  <view class="workAddContainer">
+    <view class="workaddLine" wx:for="{{ weekRepeat }}" wx:key="index" data-index="{{ index }}" bindtap="chooseWeekFun">
+      <view>{{ item.val }}</view>
+      <view wx:if="{{ item.click }}">√</view>
+    </view>
+  </view>
+</view>
+<!-- 固定的背景 -->
+<view class='pupContentBG {{click?"showBG":"hideBG"}} {{option?"openBG":"closeBG"}}' catchtap='clickPup'>
+</view>

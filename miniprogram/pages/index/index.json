@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "event": "../event/index",
+    "inspection": "../inspection/index"
+  }
+}

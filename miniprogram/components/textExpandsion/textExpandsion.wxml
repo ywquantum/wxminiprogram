@@ -1,0 +1,7 @@
+<!--components/textExpandsion/textExpandsion.wxml-->
+<view class="text-expansion">
+  <view class="text-expansion__text {{ isExpand ? 'text-expansion__text--expand' : '' }}">
+    <view class="text-expansion__button" bindtap="onClick">{{ isExpand ? collapseText : expandText }}</view>
+    {{ text }}
+  </view>
+</view>

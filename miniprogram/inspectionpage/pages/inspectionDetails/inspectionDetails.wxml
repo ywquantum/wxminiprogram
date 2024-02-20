@@ -1,0 +1,49 @@
+<!--pages/inspectionDetails/inspectionDetails.wxml-->
+<view class="inspectionDetailsContainer">
+  <view class="baseHead">{{ baseTitle }}</view>
+  <view class="baseTextContainer">{{ baseContainer }}</view>
+  <view class="threeBox" bindtouchstart="documentTouchStart" bindtouchmove="documentTouchMove" bindtouchend="documentTouchEnd">
+    <canvas type="webgl" id="threeId" style="width: 100%; height:100%;" bindtouchstart="touchStart" bindtouchmove="touchMove" bindtouchend="touchEnd" bindtouchcancel="touchCancel" bindlongtap="longTap" bindtap="tap"></canvas>
+  </view>
+  <view class="locationLine">
+    经度：{{ lot }}；纬度：{{ lnt }}
+  </view>
+</view>
+<view class="inspectionDetailsBottomBox">
+  <view class="bottomText">注意：请在执行巡检任务过程中，保持打开当前界面！</view>
+  <view class="bottomBtnList">
+    <view class="endInspection" catchtap='endDetails'>结束巡检</view>
+    <view class="recordInspection" catchtap='clickPup'>记录</view>
+  </view>
+</view>
+
+<!-- 底部弹窗动画的内容 -->
+<view class='pupContent {{click? "showContent": "hideContent"}} {{option? "open": "close"}}' hover-stop-propagation='true'>
+  <view wx:if="{{popupType == true}}">
+    <view class="popupHeadText" style="padding-left: 3%;">历史异常</view>
+    <view class="popupContainerBox">
+      <view class="popupBox" wx:for="{{popupInner}}" wx:key="index">
+        <view class="popupInnerText">{{ item.value }}</view>
+        <view class="popupBtn" catchtap='clickPup'>使用</view>
+      </view>
+    </view>
+    <view class="popupRecord" catchtap='popupRecordFun'>记录</view>
+  </view>
+  <view wx:if="{{popupType == false}}">
+    <view class="popupHeadText" style="border-bottom: 1px solid;margin-bottom: 20px;">
+      <view class="popupClose" catchtap='clickPup'>取消</view>
+      <view class="popupPush" catchtap='popupMakeSure'>提交</view>
+    </view>
+    <view class="popupContainerBox_1">
+      <view class="popupLine">
+        <view class="popupBaseText">是否异常</view>
+        <switch checked="{{switch1Checked}}" bindchange="switch1Change" />
+      </view>
+      <textarea class="detailsInput" maxlength="-1" placeholder="文字说明" auto-focus="true" />
+      <addVideoOrImg></addVideoOrImg>
+    </view>
+  </view>
+</view>
+<!-- 固定的背景 -->
+<view class='pupContentBG {{click?"showBG":"hideBG"}} {{option?"openBG":"closeBG"}}' catchtap='clickPup'>
+</view>

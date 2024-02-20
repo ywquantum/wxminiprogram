@@ -1,0 +1,107 @@
+/**index.wxss**/
+.eventListBox {
+  width: 94%;
+  height: auto;
+  padding: 10px 10px;
+  margin-left: 3%;
+  background-color: rgb(185, 185, 185);
+  margin-top: 10px;
+  box-sizing: border-box;
+  border-radius: 4px;
+}
+
+.eventListBox:last-child {
+  margin-bottom: 20px;
+}
+
+.eventBox {
+  margin-top: 36px;
+  overflow: hidden;
+}
+
+.eventListTTline {
+  width: 100%;
+  height: 24px;
+  line-height: 24px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #222;
+  position: relative;
+}
+
+.eventListTTleft {
+  width: 65%;
+  height: 24px;
+  line-height: 24px;
+}
+
+.eventListTTright {
+  font-weight: 400;
+  position: absolute;
+  right: 0px;
+  bottom: 0;
+  font-size: 13px;
+}
+
+.eventListSlideLine {
+  width: 100%;
+  height: 1px;
+  margin: 11px 0;
+  background-color: rgb(146, 146, 146);
+}
+
+.eventListBaseLine {
+  font-size: 13px;
+  line-height: 24px;
+  width: 65%;
+  height: 24px;
+}
+
+
+.eventListDCline {
+  width: 100%;
+  height: auto;
+  font-size: 13px;
+  position: relative;
+  min-height: 24px;
+}
+
+.eventListDClineleft {
+  width: calc(100% - 60px);
+  height: auto;
+}
+
+.eventListDClineright {
+  width: 50px;
+  height: 24px;
+  text-align: center;
+  font-weight: 400;
+  position: absolute;
+  right: 0px;
+  top: 0;
+  font-size: 13px;
+  line-height: 24px;
+  border-radius: 4px;
+}
+
+.eventWaitText {
+  color: #ffffff;
+  background-color: #D9001B;
+}
+
+.eventDoneText {
+  color: #222;
+  background-color: #F59A23;
+}
+
+.eventListGotoBtn {
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  font-weight: 400;
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-size: 20px;
+  line-height: 20px;
+}

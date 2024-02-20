@@ -1,0 +1,32 @@
+/* inspectionpage/pages/isoverDetails/isoverDetails.wxss */
+.overContainer {
+  width: 94%;
+  height: auto;
+  padding: 10px 10px;
+  margin-left: 3%;
+  background-color: rgb(185, 185, 185);
+  margin-top: 10px;
+  box-sizing: border-box;
+  border-radius: 4px;
+}
+
+.inspectionImgBoxLine {
+  display: flex;
+  width: 100%;
+  height: auto;
+  flex-flow: wrap;
+  justify-content: flex-start;
+  margin-top: 10px;
+}
+
+.inspection_img {
+  width: calc(33.3333% - 8px);
+  height: 90px;
+  background-color: aqua;
+  margin-bottom: 10px;
+  margin-right: 12px;
+}
+
+.inspection_img:nth-child(3n) {
+  margin-right: 0px;
+}
