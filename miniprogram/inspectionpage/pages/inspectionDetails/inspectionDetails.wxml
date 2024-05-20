@@ -12,7 +12,7 @@
 <view class="inspectionDetailsBottomBox">
   <view class="bottomText">注意：请在执行巡检任务过程中，保持打开当前界面！</view>
   <view class="bottomBtnList">
-    <view class="endInspection" catchtap='endDetails'>结束巡检</view>
+    <view class="endInspection" catchtap='endDetails'>开始巡检</view>
     <view class="recordInspection" catchtap='clickPup'>记录</view>
   </view>
 </view>

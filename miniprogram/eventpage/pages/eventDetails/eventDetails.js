@@ -2,7 +2,9 @@ Page({
   /**
    * 页面的初始数据
    */
-  data: {},
+  data: {
+    pageData: null
+  },
 
   // 提交当前内容
   pullContainer() {
@@ -28,12 +30,15 @@ Page({
     })
 
     let data = JSON.parse(decodeURIComponent(options.baseData))
-    if ('status' in data) {
-      console.log('have');
-    } else {
-      console.log('done');
-    }
+    this.setData({
+      pageData: data
+    })
   },
+
+  backRouter() {
+    wx.navigateBack();
+  },
+
 
   /**
    * 生命周期函数--监听页面初次渲染完成

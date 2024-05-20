@@ -1,136 +1,134 @@
+import {
+  request
+} from '../../http/request'
+
+const app = getApp();
+
 Page({
-  /**
-   * 页面的初始数据
-   */
   data: {
-    current: 1,
-    codeText: '获取验证码',
-    counting: false,
-    userNameInput: '',
-    userPasswordInput: ''
+    openid: "",
+    loginstate: "0",
+    userEntity: null,
+    terminal: "",
+    osVersion: "",
+    logoingType: true,
+    phoneNumbers: '',
+    passwordInput: '',
   },
-  // 登陆注册监听
-  click(e) {
-    let index = e.currentTarget.dataset.code;
-    this.setData({
-      current: index
-    })
-  },
-  //获取验证码 
-  getCode() {
+  onLoad: function () {
     var that = this;
-    if (!that.data.counting) {
-      wx.showToast({
-        title: '验证码已发送',
-      })
-      //开始倒计时60秒
-      that.countDown(that, 60);
-    }
-  },
-  //倒计时60秒
-  countDown(that, count) {
-    if (count == 0) {
-      that.setData({
-        codeText: '获取验证码',
-        counting: false
-      })
-      return;
-    }
-    that.setData({
-      counting: true,
-      codeText: count + '秒后重新获取',
-    })
-    setTimeout(function () {
-      count--;
-      that.countDown(that, count);
-    }, 1000);
-  },
 
-  //取消输入警告的空事件
-  textCallback() {},
-
-  // 登录注册按钮
-  resignInto() {
-    let name = this.data.userNameInput;
-    let password = this.data.userPasswordInput;
-    if (name == 'admin' && password == 'admin') {
-      wx.reLaunch({
-        url: '../index/index' //或者url: '/page/person/goldcoin/index'
-      })
-    } else if (name == '') {
-      wx.showToast({
-        title: '请输入手机号/登录名',
-        icon: 'none',
-        duration: 2000
+    const promise1 = new Promise((resolve, reject) => {
+      wx.getStorage({
+        key: 'userPhone',
+        success: function (res) {
+          resolve(res.data);
+        },
+        fail: function (err) {
+          reject(err);
+        }
       });
-    } else if (password == '') {
+    });
+    const promise2 = new Promise((resolve, reject) => {
+      wx.getStorage({
+        key: 'userPassword',
+        success: function (res) {
+          resolve(res.data);
+        },
+        fail: function (err) {
+          reject(err);
+        }
+      });
+    });
+    Promise.all([promise1, promise2])
+      .then(([data1, data2]) => {
+        that.loginFun(data1, data2)
+      })
+      .catch(err => {});
+  },
+  inputChange: function (event) {
+    this.setData({
+      passwordInput: event.detail.value
+    });
+  },
+  buttonClicked: function () {
+    if (this.data.passwordInput == '') {
       wx.showToast({
         title: '请输入登录密码',
         icon: 'none',
-        duration: 2000
-      });
-    } else {
-      wx.showToast({
-        title: '密码或账户错误',
-        icon: 'none',
-        duration: 2000
+        duration: 1500
       });
     }
+
+    this.loginFun(this.data.phoneNumbers, this.data.passwordInput)
   },
+  loginFun: function (phone, password) {
+    request('login', 'post', {
+      phone: phone,
+      password: password
+    }).then(res => {
+      if (res.data.code != 0) {
+        wx.showToast({
+          title: res.data.msg,
+          icon: 'none',
+          duration: 1500
+        });
+      } else {
+        wx.setStorage({
+          key: "userPhone",
+          data: phone
+        })
+        wx.setStorage({
+          key: "userPassword",
+          data: password
+        })
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad(options) {
+        app.globalData.userToken = res.data.data.token
+        app.globalData.userId = res.data.data.id
 
+        // wx.setStorage({
+        //   key: "userToken",
+        //   data: res.data.data.token
+        // })
+        // wx.setStorage({
+        //   key: "userId",
+        //   data: res.data.data.id
+        // })
+        wx.reLaunch({
+          url: '../index/index'
+        })
+      }
+    }).catch(res => {
+      wx.showToast({
+        title: res.msg,
+        icon: 'none',
+        duration: 1500
+      });
+    })
   },
+  getPhoneNumber: function (e) {
+    var that = this;
 
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady() {
-
+    if (e.detail.errMsg == 'getPhoneNumber:ok') {
+      wx.login({
+        success: (res) => {
+          request('wx/get_info', 'post', {
+            encryptedData: e.detail.encryptedData,
+            iv: e.detail.iv,
+            code: res.code
+          }).then(res => {
+            // console.log(res);
+            that.setData({
+              phoneNumbers: res.data.data.phone
+            })
+            that.setData({
+              logoingType: false
+            });
+          }).catch(res => {
+            console.log(res);
+          })
+        },
+      })
+    }
   },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload() {
-
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh() {
-
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom() {
-
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage() {
-
-  }
 })

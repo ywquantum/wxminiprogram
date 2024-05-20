@@ -1,4 +1,15 @@
 // inspectionpage/pages/workEditing/workEditing.js
+import {
+  requestToken
+} from '../../../http/request'
+import {
+  putWarnMsg,
+  getTimesOtherType_one,
+  getSandM,
+} from '../../../helpers/index.js'
+
+const app = getApp();
+
 Page({
   /**
    * 页面的初始数据
@@ -6,61 +17,54 @@ Page({
   data: {
     pageStatus: true,
     mode: 'dateTime',
-    timeForstart: new Date().getTime(),
-    timeForstartTwo: new Date().getTime(),
-    questForstart: new Date().getTime(),
-    questForstartTwo: new Date().getTime(),
+    modeTime: 'time',
+    timeForstartTwo: null,
+    questForstart: null,
+    questForstartTwo: null,
 
     textName: '',
     textContainer: '',
 
     addNewDateList: [{
-      timeStart: new Date().getTime(),
-      endStart: new Date().getTime()
+      timeStart: null,
+      endStart: null
     }],
     click: false, //是否显示弹窗内容
     option: false, //显示弹窗或关闭弹窗的操作动画
-    weekRepeat: [{
-        val: '周一',
-        click: false
-      },
-      {
-        val: '周二',
-        click: false
-      },
-      {
-        val: '周三',
-        click: false
-      },
-      {
-        val: '周四',
-        click: false
-      },
-      {
-        val: '周五',
-        click: false
-      },
-      {
-        val: '周六',
-        click: false
-      },
-      {
-        val: '周天',
-        click: false
-      },
+    weekRepeat: [
+      // {
+      //   val: '周一',
+      //   click: false
+      // },
+      // {
+      //   val: '周二',
+      //   click: false
+      // },
+      // {
+      //   val: '周三',
+      //   click: false
+      // },
+      // {
+      //   val: '周四',
+      //   click: false
+      // },
+      // {
+      //   val: '周五',
+      //   click: false
+      // },
+      // {
+      //   val: '周六',
+      //   click: false
+      // },
+      // {
+      //   val: '周天',
+      //   click: false
+      // },
     ],
     repeatDate: '不重复',
 
-    partits: [{
-        name: "安全部",
-        id: "安全部"
-      },
-      {
-        name: "生产部",
-        id: "生产部"
-      },
-    ],
-    partId: '安全部',
+    partits: [],
+    partId: '',
     workTypeits: [{
         name: "普通工单",
         id: "普通工单"
@@ -73,16 +77,8 @@ Page({
     workTypeId: '普通工单',
     workBaseType: true,
 
-    btmPartId: '安全部',
-    btmPartits: [{
-        name: "安全部",
-        id: "安全部"
-      },
-      {
-        name: "生产部",
-        id: "生产部"
-      },
-    ],
+    btmPartId: '',
+    btmPartits: [],
     btmWZId: '安全员',
     btmWZits: [{
         name: "安全员",
@@ -92,17 +88,15 @@ Page({
         name: "负责人",
         id: "负责人"
       },
-    ],
-    btmPeopleId: '张三',
-    btmPeopleits: [{
-        name: "张三",
-        id: "张三"
-      },
       {
-        name: "李四",
-        id: "李四"
+        name: "其他",
+        id: "其他"
       },
     ],
+    btmPeopleId: '',
+    btmPeopleits: [],
+
+    selectpeopleArr: null,
   },
 
   /**
@@ -111,16 +105,11 @@ Page({
   onLoad(options) {
     if (options.baseData) {
       let data = JSON.parse(decodeURIComponent(options.baseData))
-      this.setData({
-        pageStatus: false,
-        workTypeId: data.type,
-        workBaseType: data.type == '普通工单' ? true : false,
-        textName: data.corporation,
-        textContainer: data.Instructions,
-      })
       wx.setNavigationBarTitle({
         title: '工单编辑',
       })
+      console.log(data);
+      this.getPortData(data);
     } else {
       this.setData({
         pageStatus: true
@@ -128,35 +117,280 @@ Page({
       wx.setNavigationBarTitle({
         title: '工单创建',
       })
+      this.getPortData();
     }
   },
 
-  // 提交当前内容
+  getPortData(datas = null) {
+    let that = this;
+
+    requestToken('xunjian/get_inspection_list', 'get', {}).then(res => {
+      console.log(res);
+
+      if (res.code == 0) {
+        let arr = [];
+        for (let k in res.data.departments) {
+          arr.push({
+            name: k,
+            id: k
+          });
+        }
+        that.setData({
+          selectpeopleArr: res.data.departments,
+          partits: arr,
+          partId: datas ? datas.department : arr[0].id,
+          workTypeId: datas ? datas.type : '普通工单',
+          workBaseType: datas ? datas.type == '普通工单' ? true : false : true,
+          textName: datas ? datas.corporation : '',
+          textContainer: datas ? datas.Instructions : '',
+          timeForstartTwo: datas ? new Date(datas.taskcycle[1]).getTime() : new Date(getTimesOtherType_one(new Date().getTime())).getTime(),
+          btmWZId: datas ? datas.people[1] : '安全员',
+          btmPartits: arr,
+          btmPartId: datas ? datas.people[0] : arr[0].id,
+
+          event_date_start: datas && new Date(datas.taskcycle[0]).getTime(),
+          event_date_end: datas && new Date(datas.taskcycle[1]).getTime(),
+        })
+        that.qySelectPeople(datas ? datas.people[0] : arr[0].id, datas ? datas.people[2] : null)
+      } else {
+        putWarnMsg(res.msg)
+      }
+    }).catch(res => {
+      putWarnMsg(res.msg)
+    })
+  },
+
+  popupPartSelect(val) {
+    this.setData({
+      btmPartId: val.detail.selectId
+    })
+    this.qySelectPeople(val.detail.selectId)
+  },
+
+  popupPositionSelect(val) {
+    this.setData({
+      btmWZId: val.detail.selectId
+    })
+  },
+
+  popupHumanSelect(val) {
+    this.setData({
+      btmPeopleId: val.detail.select
+    })
+  },
+
+  qySelectPeople(val, focus = null) {
+    for (let k in this.data.selectpeopleArr) {
+      if (k == val) {
+        let arr = [];
+        this.data.selectpeopleArr[k].forEach((item) => {
+          arr.push({
+            name: item.name,
+            id: item.id,
+          });
+        });
+
+        this.setData({
+          btmPeopleits: arr,
+          btmPeopleId: focus ? focus : arr[0].name
+        })
+      }
+    }
+  },
+
+  putBtn() {
+    if (this.data.textName == '') {
+      putWarnMsg('请输入工单名称')
+      return false
+    }
+    if (this.data.textContainer == '') {
+      putWarnMsg('请输入工单内容说明')
+      return false
+    }
+
+    let that = this,
+      executor_id;
+    this.data.btmPeopleits.forEach(item => {
+      if (item.name == that.data.btmPeopleId) {
+        executor_id = item.id
+      }
+    })
+
+    if (this.data.workBaseType == true) {
+      let params = {
+        event_type: 2,
+        event_name: this.data.textName,
+        event_description: this.data.textContainer,
+        event_department: this.data.partId,
+        user_position: this.data.btmWZId,
+        executor_id: executor_id,
+        creator_id: app.globalData.userId,
+        event_date_end: getTimesOtherType_one(this.data.timeForstartTwo),
+      };
+      console.log(params);
+    } else {
+      let gap = '';
+      this.data.addNewDateList.forEach(item => {
+        gap += `${getSandM(item.timeStart)}-${getSandM(item.endStart)},`
+      })
+
+      let frequ = '';
+      let freStatus = '';
+      let freIndex = 0;
+      this.data.weekRepeat.forEach(item => {
+        if (item.click) {
+          freStatus += `${item.val},`
+          freIndex++
+        }
+      })
+      if (freIndex == 0) {
+        frequ = "不重复";
+      } else if (freIndex == 7) {
+        frequ = "重复";
+      } else {
+        frequ = freStatus.slice(0, frequ.length - 1);
+      }
+
+      let params = {
+        event_type: 1,
+        event_name: this.data.textName,
+        event_description: this.data.textContainer,
+        event_department: this.data.partId,
+        user_position: this.data.btmWZId,
+        executor_id: executor_id,
+        creator_id: app.globalData.userId,
+        event_date_start: getTimesOtherType_one(this.data.questForstart),
+        event_date_end: getTimesOtherType_one(this.data.questForstartTwo),
+        event_frequency: frequ,
+        event_time_gap: gap,
+      }
+      console.log(params);
+    }
+  },
+
   pullContainer() {
-    wx.navigateBack();
+    // wx.navigateBack();
   },
 
-  // 下拉列表选择监听
   partFruit(e) {
-    console.log(e);
+    this.setData({
+      partId: e.detail.selectId
+    })
   },
 
-  // 下拉列表选择监听
+  handleName(e) {
+    this.setData({
+      textName: e.detail.value
+    })
+  },
+
+  handleDetails(e) {
+    this.setData({
+      textContainer: e.detail.value
+    })
+  },
+
   workTypeFruit(e) {
     if (e.detail.selectId == '巡检工单') {
       this.setData({
-        workBaseType: false
+        workBaseType: false,
+        questForstart: new Date(getTimesOtherType_one(new Date().getTime())).getTime(),
+        questForstartTwo: new Date(getTimesOtherType_one(new Date().getTime())).getTime(),
+        repeatDate: '不重复',
+        weekRepeat: [{
+            val: '周一',
+            click: false
+          },
+          {
+            val: '周二',
+            click: false
+          },
+          {
+            val: '周三',
+            click: false
+          },
+          {
+            val: '周四',
+            click: false
+          },
+          {
+            val: '周五',
+            click: false
+          },
+          {
+            val: '周六',
+            click: false
+          },
+          {
+            val: '周天',
+            click: false
+          },
+        ],
+        addNewDateList: [{
+          timeStart: new Date('2024-05-01 00:00:00').getTime(),
+          endStart: new Date('2024-05-01 00:00:00').getTime()
+        }],
       })
     } else {
       this.setData({
-        workBaseType: true
+        workBaseType: true,
+        timeForstartTwo: new Date(getTimesOtherType_one(new Date().getTime())).getTime(),
       })
     }
   },
 
-  //返回回调函数
-  onPickerChange(e) {
-    console.log("onPickerChange", e)
+  ptEnd(e) {
+    this.setData({
+      timeForstartTwo: new Date(e.detail.value).getTime()
+    })
+  },
+
+  xjStart(e) {
+    this.setData({
+      questForstart: new Date(e.detail.value).getTime()
+    })
+  },
+
+  xjEnd(e) {
+    this.setData({
+      questForstartTwo: new Date(e.detail.value).getTime()
+    })
+  },
+
+  qsTimeStart(e) {
+    const index = e.currentTarget.dataset.index;
+    const newValue = e.detail.value;
+    const newData = this.data.addNewDateList.map((item, i) => {
+      if (i === index) {
+        return {
+          ...item,
+          timeStart: new Date(`2024-05-01 ${newValue}`).getTime()
+        };
+      } else {
+        return item;
+      }
+    });
+    this.setData({
+      addNewDateList: newData
+    });
+  },
+
+  qsTimeEnd(e) {
+    const index = e.currentTarget.dataset.index;
+    const newValue = e.detail.value;
+    const newData = this.data.addNewDateList.map((item, i) => {
+      if (i === index) {
+        return {
+          ...item,
+          endStart: new Date(`2024-05-01 ${newValue}`).getTime()
+        };
+      } else {
+        return item;
+      }
+    });
+    this.setData({
+      addNewDateList: newData
+    });
   },
 
   clickPup: function () {
@@ -172,7 +406,6 @@ Page({
         option: false,
       })
 
-      // 关闭显示弹窗动画的内容，不设置的话会出现：点击任何地方都会出现弹窗，就不是指定位置点击出现弹窗了
       setTimeout(() => {
         _that.setData({
           click: false,
@@ -193,7 +426,7 @@ Page({
         })
       } else if (boolLength == 7) {
         _that.setData({
-          repeatDate: '每天'
+          repeatDate: '重复'
         })
       } else {
         _that.setData({
@@ -208,7 +441,6 @@ Page({
     }
   },
 
-  // 当前选择日期
   chooseWeekFun(e) {
     let index = e.currentTarget.dataset.index
     let bool = this.data.weekRepeat[index].click
@@ -217,13 +449,12 @@ Page({
     });
   },
 
-  // 新增时间选择项
   addNewListFun() {
     let index = this.data.addNewDateList.length;
     this.setData({
       ['addNewDateList[' + index + ']']: {
-        timeStart: new Date().getTime(),
-        endStart: new Date().getTime()
+        timeStart: new Date('2024-05-01 00:00:00').getTime(),
+        endStart: new Date('2024-05-01 00:00:00').getTime(),
       }
     })
   },

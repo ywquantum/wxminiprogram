@@ -39,6 +39,7 @@
   },
   "projectname": "yw-smallprogram",
   "libVersion": "2.14.1",
+  "appid": "wx77feb26ec1a6fef9",
   "condition": {
     "miniprogram": {
       "list": [

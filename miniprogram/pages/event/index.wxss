@@ -67,12 +67,12 @@
 }
 
 .eventListDClineleft {
-  width: calc(100% - 60px);
+  width: calc(100% - 80px);
   height: auto;
 }
 
 .eventListDClineright {
-  width: 50px;
+  width: 70px;
   height: 24px;
   text-align: center;
   font-weight: 400;

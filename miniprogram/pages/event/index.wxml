@@ -10,8 +10,7 @@
       <view class="eventListBaseLine">位置：{{ item.position }}</view>
       <view class="eventListDCline">
         <view class="eventListDClineleft">说明：{{ item.Instructions }}</view>
-        <view wx:if="{{item.status}}" class="eventListDClineright eventWaitText" data-index="{{ item }}" bindtap="eventSwitch">待响应</view>
-        <view wx:else="{{!item.status}}" class="eventListDClineright eventDoneText" data-index="{{ item }}" bindtap="eventSwitch">处理中</view>
+        <view class="eventListDClineright eventWaitText" data-index="{{ item }}" bindtap="eventSwitch">开始处理</view>
       </view>
       <view class="eventListSlideLine"></view>
       <view class="eventListBaseLine">负责人：{{ item.charger }}</view>

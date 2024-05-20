@@ -18,7 +18,8 @@ Component({
     },
     dateTime: {
       type: Number,
-      value: new Date().getTime()
+      value: new Date().getTime(),
+      observer: 'dateTimeChange'
     },
     placeholder: String
   },
@@ -39,6 +40,10 @@ Component({
 
     modeChange: function (newVal, oldVal) {
       this.getPickerArray(newVal)
+    },
+
+    dateTimeChange: function (newVal, oldVal) {
+      this.getPickerArray(this.data.mode, newVal)
     },
     //补零
     formatNumber(n) {

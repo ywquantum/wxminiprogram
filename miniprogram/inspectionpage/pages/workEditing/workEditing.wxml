@@ -9,32 +9,28 @@
     </selectComponents>
   </view>
   <view class="workBaseLine">
-    <textarea class="workNameInput" value="{{textName}}" maxlength="-1" placeholder="请输入巡检工单名称" />
+    <textarea class="workNameInput" value="{{textName}}" maxlength="-1" bindinput="handleName" placeholder="请输入工单名称" />
   </view>
   <view class="workBaseLine">
-    <textarea class="eventDetailsInput" maxlength="-1" value="{{textContainer}}" placeholder="请输入巡检工单内容说明（what、why、how）" />
+    <textarea class="eventDetailsInput" maxlength="-1" value="{{textContainer}}" bindinput="handleDetails" placeholder="请输入工单内容说明（what、why、how）" />
   </view>
   <addVideoOrImg></addVideoOrImg>
 
   <view wx:if="{{ workBaseType }}">
-    <view class="workBaseLine">起始时间：</view>
+    <view class="workBaseLine">截止时间：</view>
     <view class="workTimeList">
-      <time-picker mode="{{mode}}" dateTime="{{ timeForstart }}" placeholder="请选择时间" class="workTimesUpdata" bind:onPickerChange="onPickerChange"></time-picker>
-      <view class="workPointLeft">></view>
-    </view>
-    <view class="workTimeList">
-      <time-picker mode="{{mode}}" dateTime="{{ timeForstartTwo }}" placeholder="请选择时间" class="workTimesUpdata" bind:onPickerChange="onPickerChange"></time-picker>
+      <time-picker mode="{{mode}}" dateTime="{{ timeForstartTwo }}" placeholder="请选择时间" class="workTimesUpdata" bind:onPickerChange="ptEnd"></time-picker>
       <view class="workPointLeft">></view>
     </view>
   </view>
   <view wx:if="{{ !workBaseType }}">
     <view class="workBaseLine">任务周期：</view>
     <view class="workTimeList">
-      <time-picker mode="{{mode}}" dateTime="{{ questForstart }}" placeholder="请选择时间" class="workTimesUpdata" bind:onPickerChange="onPickerChange"></time-picker>
+      <time-picker mode="{{mode}}" dateTime="{{ questForstart }}" placeholder="请选择时间" class="workTimesUpdata" bind:onPickerChange="xjStart"></time-picker>
       <view class="workPointLeft">></view>
     </view>
     <view class="workTimeList">
-      <time-picker mode="{{mode}}" dateTime="{{ questForstartTwo }}" placeholder="请选择时间" class="workTimesUpdata" bind:onPickerChange="onPickerChange"></time-picker>
+      <time-picker mode="{{mode}}" dateTime="{{ questForstartTwo }}" placeholder="请选择时间" class="workTimesUpdata" bind:onPickerChange="xjEnd"></time-picker>
       <view class="workPointLeft">></view>
     </view>
     <view class="workBaseLine flexJust workBaseBorder" catchtap='clickPup'>
@@ -44,11 +40,11 @@
     <view class="workBaseLine">起始时间：</view>
     <view class="workInspetionLine" wx:for="{{ addNewDateList }}" wx:key="index">
       <view class="workTimeList">
-        <time-picker mode="{{mode}}" dateTime="{{ item.timeStart }}" placeholder="请选择时间" class="workTimesUpdata" bind:onPickerChange="onPickerChange"></time-picker>
+        <time-picker mode="{{modeTime}}" dateTime="{{ item.timeStart }}" placeholder="请选择时间" class="workTimesUpdata" bind:onPickerChange="qsTimeStart" data-index="{{index}}"></time-picker>
         <view class="workPointLeft">></view>
       </view>
       <view class="workTimeList">
-        <time-picker mode="{{mode}}" dateTime="{{ item.endStart }}" placeholder="请选择时间" class="workTimesUpdata" bind:onPickerChange="onPickerChange"></time-picker>
+        <time-picker mode="{{modeTime}}" dateTime="{{ item.endStart }}" placeholder="请选择时间" class="workTimesUpdata" bind:onPickerChange="qsTimeEnd" data-index="{{index}}"></time-picker>
         <view class="workPointLeft">></view>
       </view>
       <view class="workSlideLine"></view>
@@ -58,21 +54,21 @@
 
   <view class="workEditingChooseList">
     <view class="workEditingSelectBox">
-      <selectComponents nowId="{{btmPartId}}" nameList="{{btmPartits}}" nowName="{{btmPartId}}" placeholder="请选择部门" bind:handleChange="btmPartFruit">
+      <selectComponents nowId="{{btmPartId}}" nameList="{{btmPartits}}" nowName="{{btmPartId}}" placeholder="请选择部门" bind:handleChange="popupPartSelect">
       </selectComponents>
     </view>
     <view class="workEditingSelectBox">
-      <selectComponents nowId="{{btmWZId}}" nameList="{{btmWZits}}" nowName="{{btmWZId}}" placeholder="请选择职务" bind:handleChange="btmPartFruit">
+      <selectComponents nowId="{{btmWZId}}" nameList="{{btmWZits}}" nowName="{{btmWZId}}" placeholder="请选择职务" bind:handleChange="popupPositionSelect">
       </selectComponents>
     </view>
     <view class="workEditingSelectBox">
-      <selectComponents nowId="{{btmPeopleId}}" nameList="{{btmPeopleits}}" nowName="{{btmPeopleId}}" placeholder="请选择人员" bind:handleChange="btmPartFruit">
+      <selectComponents nowId="{{btmPeopleId}}" nameList="{{btmPeopleits}}" nowName="{{btmPeopleId}}" placeholder="请选择人员" bind:handleChange="popupHumanSelect">
       </selectComponents>
     </view>
   </view>
 </view>
 
-<view class="eventDetailsPull" bindtap="pullContainer" wx:if="{{ pageStatus }}">提交</view>
+<view class="eventDetailsPull" bindtap="putBtn" wx:if="{{ pageStatus }}">提交</view>
 <view wx:if="{{ !pageStatus }}" class="eventDetailsPullPage2">
   <view class="delBtn" bindtap="pullContainer">删除</view>
   <view class="saveBtn" bindtap="pullContainer">保存</view>
