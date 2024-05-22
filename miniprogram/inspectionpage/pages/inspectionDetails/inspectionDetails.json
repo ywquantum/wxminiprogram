@@ -1,6 +1,7 @@
 {
   "component": true,
   "usingComponents": {
-    "addVideoOrImg": "../../../components/addVideoOrImg/addVideoOrImg"
+    "addVideoOrImg": "../../../components/addVideoOrImg/addVideoOrImg",
+    "selectComponents": "../../../components/selectComponents/selectComponents"
   }
 }

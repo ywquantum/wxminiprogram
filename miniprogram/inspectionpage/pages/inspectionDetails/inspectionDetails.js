@@ -26,6 +26,21 @@ Page({
     ],
     popupType: true,
     switch1Checked: true,
+
+    partits: [{
+        name: '值更棒1号',
+        id: '值更棒1号'
+      },
+      {
+        name: '值更棒2号',
+        id: '值更棒2号'
+      },
+      {
+        name: '值更棒3号',
+        id: '值更棒3号'
+      },
+    ],
+    partId: '',
   },
 
   /**
@@ -38,56 +53,56 @@ Page({
       baseContainer: data.Instructions
     })
 
-    wx.createSelectorQuery()
-      .select('#threeId')
-      .node()
-      .exec((res) => {
-        const canvas = THREE.global.registerCanvas(res[0].node)
+    // wx.createSelectorQuery()
+    //   .select('#threeId')
+    //   .node()
+    //   .exec((res) => {
+    //     const canvas = THREE.global.registerCanvas(res[0].node)
 
-        this.setData({
-          canvasId: canvas._canvasId
-        })
+    //     this.setData({
+    //       canvasId: canvas._canvasId
+    //     })
 
-        const camera = new THREE.PerspectiveCamera(60, canvas.width / canvas.height, 10, 100000);
-        camera.position.set(-124.5015, 585.0608, -93.3686);
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xAAAAAA);
-        const renderer = new THREE.WebGLRenderer({
-          antialias: true
-        });
+    //     const camera = new THREE.PerspectiveCamera(60, canvas.width / canvas.height, 10, 100000);
+    //     camera.position.set(-124.5015, 585.0608, -93.3686);
+    //     const scene = new THREE.Scene();
+    //     scene.background = new THREE.Color(0xAAAAAA);
+    //     const renderer = new THREE.WebGLRenderer({
+    //       antialias: true
+    //     });
 
-        const controls = new OrbitControls(camera, renderer.domElement);
-        controls.touches = {
-          ONE: THREE.TOUCH.PAN,
-          TWO: THREE.TOUCH.DOLLY_PAN
-        };
-        controls.target.set(-124.8207, 0, -108.6094);
-        controls.minDistance = 0;
-        controls.maxDistance = 900;
-        controls.maxPolarAngle = Math.PI * 0.45;
-        controls.enableRotate = false;
-        controls.update();
+    //     const controls = new OrbitControls(camera, renderer.domElement);
+    //     controls.touches = {
+    //       ONE: THREE.TOUCH.PAN,
+    //       TWO: THREE.TOUCH.DOLLY_PAN
+    //     };
+    //     controls.target.set(-124.8207, 0, -108.6094);
+    //     controls.minDistance = 0;
+    //     controls.maxDistance = 900;
+    //     controls.maxPolarAngle = Math.PI * 0.45;
+    //     controls.enableRotate = false;
+    //     controls.update();
 
-        renderer.setPixelRatio(wx.getSystemInfoSync().pixelRatio);
-        renderer.setSize(canvas.width, canvas.height);
+    //     renderer.setPixelRatio(wx.getSystemInfoSync().pixelRatio);
+    //     renderer.setSize(canvas.width, canvas.height);
 
-        function onWindowResize() {
-          camera.aspect = window.innerWidth / window.innerHeight;
-          camera.updateProjectionMatrix();
-          renderer.setSize(canvas.width, canvas.height);
-        }
+    //     function onWindowResize() {
+    //       camera.aspect = window.innerWidth / window.innerHeight;
+    //       camera.updateProjectionMatrix();
+    //       renderer.setSize(canvas.width, canvas.height);
+    //     }
 
-        function render() {
-          canvas.requestAnimationFrame(render);
+    //     function render() {
+    //       canvas.requestAnimationFrame(render);
 
-          controls.update();
-          renderer.render(scene, camera);
-        }
+    //       controls.update();
+    //       renderer.render(scene, camera);
+    //     }
 
-        render();
-        this.addPlaneBG(scene);
-        this.acquireLocation();
-      })
+    //     render();
+    //     // this.addPlaneBG(scene);
+    //     // this.acquireLocation();
+    //   })
   },
 
   // 添加基础地图片
@@ -163,22 +178,16 @@ Page({
 
   // 获取用户经纬度信息
   acquireLocation() {
-    let that = this;
-    wx.getLocation({
-      type: 'wgs84',
-      success(res) {
-        // const latitude = res.latitude //获取经度
-        // const longitude = res.longitude //获取维度
-        // const speed = res.speed //获取速度
-        // const accuracy = res.accuracy //获取精度
-        // const altitude = res.altitude //获取高度
-
-        that.setData({
-          lot: res.latitude,
-          lnt: res.longitude
-        })
-      }
-    })
+    // let that = this;
+    // wx.getLocation({
+    //   type: 'wgs84',
+    //   success(res) {
+    //     that.setData({
+    //       lot: res.latitude,
+    //       lnt: res.longitude
+    //     })
+    //   }
+    // })
   },
 
   touchStart(e) {
@@ -261,6 +270,12 @@ Page({
 
   },
 
+  userOldRecord: function () {
+    this.setData({
+      popupType: false
+    })
+  },
+
   clickPup: function () {
     let _that = this;
     if (!_that.data.click) {
@@ -274,7 +289,6 @@ Page({
         option: false,
       })
 
-      // 关闭显示弹窗动画的内容，不设置的话会出现：点击任何地方都会出现弹窗，就不是指定位置点击出现弹窗了
       setTimeout(() => {
         _that.setData({
           click: false,
@@ -315,6 +329,7 @@ Page({
   },
 
   endDetails() {
-    wx.navigateBack();
+    console.log('开始巡检');
+    // wx.navigateBack();
   }
 })

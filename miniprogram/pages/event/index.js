@@ -15,7 +15,7 @@ Component({
   // 属性定义（详情参见下文）
   properties: {},
   data: {
-    menulist: ['待处理', '已处理'],
+    menulist: ['待响应', '处理中', '已处理'],
     menuTopVal: 0,
     containerMenuList: 0,
     waitEvent: [],
@@ -41,7 +41,9 @@ Component({
 
   pageLifetimes: {
     // 组件所在页面的生命周期函数
-    show: function () {},
+    show: function () {
+      this.getTableList(this.data.containerMenuList == 0 ? 1 : this.data.containerMenuList == 1 ? 2 : 3)
+    },
     hide: function () {},
     resize: function () {},
   },
@@ -50,9 +52,11 @@ Component({
     menuFun(e) {
       let val = e.detail;
       this.setData({
-        containerMenuList: val
+        containerMenuList: val,
+        waitEvent: [],
+        doneEvent: []
       })
-      this.getTableList(val == 0 ? 1 : 2)
+      this.getTableList(val == 0 ? 1 : val == 1 ? 2 : 3)
     },
     eventSwitch(e) {
       let baseData = JSON.stringify(e.currentTarget.dataset['index'])
@@ -60,12 +64,31 @@ Component({
         url: '../../eventpage/pages/eventDetails/eventDetails?baseData=' + encodeURIComponent(baseData)
       })
     },
+    startSwitch(e) {
+      let baseData = e.currentTarget.dataset['index']
+      let data = {
+        alarm_id: baseData.eventId,
+      };
+      requestToken(`alarm`, 'POST', data).then(res => {
+        if (res.code == 0) {
+          this.setData({
+            waitEvent: [],
+            doneEvent: []
+          })
+          this.getTableList(1)
+        } else {
+          putWarnMsg(res.msg)
+        }
+      }).catch(res => {
+        putWarnMsg(res.msg)
+      })
+    },
     getTableList(type) {
       let that = this;
       requestToken(`alarm?status=${type}&order=1&page=0`, 'get', {}).then(res => {
         // console.log(res);
         if (res.code == 0) {
-          if (type == 1) {
+          if (type == 1 || type == 2) {
             let arr = [];
             res.data.alarms.forEach(item => {
               let name;
@@ -83,12 +106,13 @@ Component({
                 charger: name,
                 eventId: item.id,
                 edit: true,
+                isending: type
               })
             })
             that.setData({
               waitEvent: arr
             })
-          } else if (type == 2) {
+          } else if (type == 3) {
             let arr = [];
             res.data.alarms.forEach(item => {
               let name;
@@ -106,6 +130,8 @@ Component({
                 charger: name,
                 eventId: item.id,
                 edit: false,
+                handle_imgs: item.handle_imgs,
+                handle_desc: item.handle_desc
               })
             })
             that.setData({

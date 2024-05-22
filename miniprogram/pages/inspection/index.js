@@ -4,7 +4,8 @@ import {
 import {
   getTimesOtherType,
   putWarnMsg,
-  getTimesOtherType_one
+  getTimesOtherType_one,
+  arrayBufferToBase64
 } from '../../helpers/index'
 
 const app = getApp();
@@ -14,7 +15,7 @@ Component({
   // 属性定义（详情参见下文）
   properties: {},
   data: {
-    menulist: ['待开始', '已结束', '工单列表'],
+    menulist: ['待完成', '已结束', '工单列表'],
     menuTopVal: 0,
     containerMenuList: 0,
     waitEvent: [],
@@ -36,6 +37,7 @@ Component({
     ],
     workorderData: [],
     selectpeopleArr: null,
+    activeName: '',
   },
 
   lifetimes: {
@@ -48,7 +50,7 @@ Component({
       this.getDKSdatas();
     },
     moved: function () {},
-    detached: function () {},
+    detached: function () {}
   },
 
   // 生命周期函数，可以为函数，或一个在methods段中定义的方法名
@@ -57,7 +59,15 @@ Component({
 
   pageLifetimes: {
     // 组件所在页面的生命周期函数
-    show: function () {},
+    show: function () {
+      if (this.data.containerMenuList == 0) {
+        this.getDKSdatas()
+      } else if (this.data.containerMenuList == 1) {
+        this.getYJSdatas()
+      } else if (this.data.containerMenuList == 2) {
+        this.getGDlist()
+      }
+    },
     hide: function () {},
     resize: function () {},
   },
@@ -80,19 +90,20 @@ Component({
     getDKSdatas() {
       let that = this;
 
-      let str = `xunjian/inspection_get?executor_id=${app.globalData.userId}&event_department=&event_type=&event_status=1&page=1`
+      let str = `xunjian/record_filter?event_type=&page=2&event_department=&executor_id=${app.globalData.userId}&event_overview=1&event_date_start=1715668809&event_date_end=1716273609`
       requestToken(str, 'get', {}).then(res => {
         if (res.code == 0) {
           let arr = [];
-          res.data.inspections.forEach(item => {
+          res.data.inspections.forEach((item, index) => {
             arr.push({
               corporation: item.event_name,
               Instructions: item.event_description,
               time: getTimesOtherType(item.event_date_start),
-              endtime: getTimesOtherType(item.event_date_end),
-              imgs: [],
+              endtime: item.event_date_end && getTimesOtherType(item.event_date_end),
+              imgs: item.event_pic && JSON.parse(item.event_pic),
               type: item.event_type == 2 ? "workorder" : "inspection",
               id: item.event_id,
+              imgCoolapse: index
             })
           })
           that.setData({
@@ -105,10 +116,40 @@ Component({
         putWarnMsg(res.msg)
       })
     },
+    getYJSdatas() {
+      let that = this;
+
+      let str = `xunjian/record_filter?event_type=&page=2&event_department=&executor_id=${app.globalData.userId}&event_overview=3&event_date_start=1715668809&event_date_end=1716273609`
+      requestToken(str, 'get', {}).then(res => {
+        if (res.code == 0) {
+          let arr = [];
+          res.data.inspections.forEach((item, index) => {
+            arr.push({
+              corporation: item.event_name,
+              Instructions: item.event_description,
+              time: getTimesOtherType(item.event_date_start),
+              endtime: item.event_date_end && getTimesOtherType(item.event_date_end),
+              imgs: item.event_pic && JSON.parse(item.event_pic),
+              type: item.event_type == 2 ? "workorder" : "inspection",
+              id: item.event_id,
+              status: item.event_status,
+              imgCoolapse: index
+            })
+          })
+          that.setData({
+            doneEvent: arr
+          })
+        } else {
+          putWarnMsg(res.msg)
+        }
+      }).catch(res => {
+        putWarnMsg(res.msg)
+      })
+    },
     getGDlist() {
       let that = this;
 
-      let str = `xunjian/inspection_list_get?event_type=&page=1&event_department=&creator_id=${app.globalData.userId}&event_overview=1`
+      let str = `xunjian/inspection_list_get?event_type=&page=1&event_department=&creator_id=&event_overview=&executor_id=${app.globalData.userId}`
       requestToken(str, 'get', {}).then(res => {
         if (res.code == 0) {
           console.log(res);
@@ -138,7 +179,7 @@ Component({
               });
             }
             let humanbeing = [userPart, item.user_position, userName];
-            let userStatus = item.event_status == '1' ? '待开始' : item.event_status == '2' ? '进行中' : item.event_status == '3' ? '未完成' : item.event_status == '4' ? '已完成' : '请假'
+            let userStatus = item.event_status == '1' ? '待完成' : item.event_status == '2' ? '进行中' : item.event_status == '3' ? '已完成' : '未处理'
 
             arr.push({
               type: item.event_type == 2 ? "普通工单" : "巡检工单",
@@ -151,7 +192,7 @@ Component({
               people: humanbeing,
               status: userStatus,
               department: item.event_department,
-              id: item.event_id,
+              id: item.id,
             })
           })
           that.setData({
@@ -173,7 +214,7 @@ Component({
       if (val == 0) {
         this.getDKSdatas()
       } else if (val == 1) {
-
+        this.getYJSdatas()
       } else if (val == 2) {
         this.getGDlist()
       }
@@ -211,6 +252,32 @@ Component({
       wx.navigateTo({
         url: '../../inspectionpage/pages/workEditing/workEditing?baseData=' + encodeURIComponent(baseData)
       })
+    },
+    imgOnChange(e) {
+      if (e.detail == '') {
+        this.setData({
+          activeName: e.detail,
+        });
+        return false
+      }
+
+      let that = this
+      this.setData({
+        DWCImgArr: []
+      });
+      let imgs = this.data.waitEvent[e.detail].imgs
+      imgs.forEach(item => {
+        let str = `xunjian/ins_handle_file?handle_file=${item}`
+        requestToken(str, 'get', {}).then(res => {
+          // let base64 = arrayBufferToBase64(res);
+          // that.setData({
+          //   DWCImgArr: that.data.DWCImgArr.concat(base64)
+          // });
+        })
+      })
+      this.setData({
+        activeName: e.detail,
+      });
     }
   }
 })

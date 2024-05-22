@@ -1,10 +1,15 @@
+import {
+  requestToimgs
+} from '../../../http/request'
+const base64 = require('../../../libs/base64');
+
 Page({
   /**
    * 页面的初始数据
    */
   data: {
     instructions: '',
-    imgs: ['', '', '']
+    imgs: []
   },
 
   /**
@@ -13,10 +18,23 @@ Page({
   onLoad(options) {
     let data = JSON.parse(decodeURIComponent(options.baseData))
     this.setData({
-      instructions: data.Instructions
+      instructions: data.Instructions,
+      imgs: []
     })
     wx.setNavigationBarTitle({
       title: data.corporation
+    })
+    let that = this
+    let img = data.imgs ? data.imgs : []
+    img && img.forEach(item => {
+      let str = `xunjian/ins_handle_file?handle_file=${item}`
+      requestToimgs(str, 'get', {}).then(res => {
+        const uint8Array = new Uint8Array(res);
+        const base64Data = 'data:image/png;base64,' + base64.fromByteArray(uint8Array);
+        that.setData({
+          imgs: that.data.imgs.concat(base64Data)
+        });
+      })
     })
   },
 

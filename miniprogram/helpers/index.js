@@ -1,3 +1,7 @@
+import {
+  btoa
+} from '../libs/base64.js'
+
 export const getTimestampConversion = function (timestamp) {
   let timeStamp;
   let timeStampLen = timestamp.toString().length;
@@ -18,9 +22,9 @@ export const getTimestampConversion = function (timestamp) {
   let h = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
   let m =
     date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
-  // let s =
-  //     date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-  let s = "00";
+  let s =
+    date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+  // let s = "00";
   return `${Y}-${M}-${D} ${h}:${m}:${s}`;
 };
 
@@ -110,4 +114,10 @@ export const putWarnMsg = (str) => {
     icon: 'none',
     duration: 1500
   });
+}
+
+// 转换base64位数据
+export const arrayBufferToBase64 = (buffer) => {
+  const str = String.fromCharCode(...new Uint8Array(buffer));
+  return `data:image/jpeg;base64,${btoa(str)}`;
 }

@@ -1,13 +1,16 @@
 <!--pages/eventDetails/eventDetails.wxml-->
 <view class="eventDetailsContainer" wx:if="{{ pageData.edit }}">
-  <textarea class="eventDetailsInput" maxlength="-1" placeholder="请填写处理说明" auto-focus="true" />
-  <addVideoOrImg></addVideoOrImg>
+  <textarea class="eventDetailsInput" maxlength="-1" placeholder="请填写处理说明" auto-focus="true" bindinput="handleInput" />
+  <addVideoOrImg id="addVideoOrImgComponent"></addVideoOrImg>
 </view>
 <view wx:if="{{ pageData.edit }}" class="eventDetailsPull" bindtap="pullContainer">提交</view>
 
 <view class="eventDetailsContainer" wx:if="{{ !pageData.edit }}">
-  <textarea class="eventDetailsInput" maxlength="-1" placeholder="请填写处理说明" auto-focus="true" />
-  <addVideoOrImg></addVideoOrImg>
+  <textarea class="eventDetailsInput" maxlength="-1" placeholder="请填写处理说明" auto-focus="true" value="{{textEvent}}" disabled />
+  <view class="inspectionImgBoxLine">
+    <view wx:for="{{ imgs }}" wx:key="index" class="inspection_img">
+      <image src="{{ item }}" mode="aspectFit" class="imgBox" />
+    </view>
+  </view>
 </view>
-<van-button type="default">默认按钮</van-button>
 <view wx:if="{{ !pageData.edit }}" class="eventDetailsPull" bindtap="backRouter">返回</view>

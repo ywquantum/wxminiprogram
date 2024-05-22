@@ -5,7 +5,7 @@
     </selectComponents>
   </view>
   <view class="workBaseLine">
-    <selectComponents nowId="{{workTypeId}}" nameList="{{workTypeits}}" nowName="{{workTypeId}}" placeholder="请选择部门" bind:handleChange="workTypeFruit">
+    <selectComponents nowId="{{workTypeId}}" nameList="{{workTypeits}}" nowName="{{workTypeId}}" placeholder="请选择工单类型" bind:handleChange="workTypeFruit">
     </selectComponents>
   </view>
   <view class="workBaseLine">
@@ -70,8 +70,8 @@
 
 <view class="eventDetailsPull" bindtap="putBtn" wx:if="{{ pageStatus }}">提交</view>
 <view wx:if="{{ !pageStatus }}" class="eventDetailsPullPage2">
-  <view class="delBtn" bindtap="pullContainer">删除</view>
-  <view class="saveBtn" bindtap="pullContainer">保存</view>
+  <view class="delBtn" bindtap="delBtnFun">删除</view>
+  <view class="saveBtn" bindtap="putBtn">保存</view>
 </view>
 
 <!-- 底部弹窗动画的内容 -->

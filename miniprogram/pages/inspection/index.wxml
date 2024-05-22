@@ -9,12 +9,15 @@
     <view class="inspectionInstructionsLine">
       <textExpandsion text="{{ item.Instructions }}"></textExpandsion>
     </view>
-    <view class="inspectionImgBoxLine">
-      <view wx:for="{{ item.imgs }}" wx:key="index" class="inspection_img"></view>
-    </view>
+    <!-- <view class="inspectionImgBoxLine" wx:if="{{ item.imgs && item.imgs.length > 0 }}">
+      <view wx:for="{{ item.imgs }}" wx:key="index" class="inspection_img" wx:for-item="dev">
+        <image src="{{ dev }}" mode="aspectFit" class="inspection_image"></image>
+      </view>
+    </view> -->
     <view class="inspectionDoubleLine">
       <view class="inspectionTimesLine">
-        <view>开始时间：{{ item.time }}</view>
+        <view wx:if="{{ item.type == 'inspection' }}">开始时间：{{ item.time }}</view>
+        <view wx:if="{{ item.type == 'workorder' }}">截止时间：{{ item.time }}</view>
         <view wx:if="{{ item.endtime }}" style="margin-top: 5px;">结束时间：{{ item.endtime }}</view>
       </view>
       <view wx:if="{{ item.type == 'inspection' }}" class="inspectionBtn" data-index="{{ item }}" bindtap="startInspection">开始巡检</view>
@@ -28,10 +31,7 @@
     <view class="inspectionInstructionsLine">
       <textExpandsion text="{{ item.Instructions }}"></textExpandsion>
     </view>
-    <view wx:if="{{ !item.status }}" class="workDoneLine">
-      未完成
-    </view>
-    <view wx:if="{{ item.status }}" class="workDoneLine">
+    <view class="workDoneLine">
       <view>已完成</view>
       <view data-index="{{ item }}" bindtap="endWorkLook">></view>
     </view>

@@ -13,6 +13,7 @@ Component({
    */
   data: {
     imgList: [], // 上传列表
+    imgFileList: [],
     src: "", // 上传视频
   },
 
@@ -55,13 +56,16 @@ Component({
             mask: true,
             duration: 1000
           })
-          // 返回选定照片的本地文件路径列表,tempFilePaths可以作为img标签的scr属性显示图片
           var imgList = res.tempFilePaths
           let tempFilePathsImg = _this.data.imgList
-          // 获取当前已上传的图片的数组
           var tempFilePathsImgs = tempFilePathsImg.concat(imgList)
+
+          var imgFileList = res.tempFiles
+          let tempFilePathsFile = _this.data.imgFileList
+          var tempFilePathsFiles = tempFilePathsFile.concat(imgFileList)
           _this.setData({
-            imgList: tempFilePathsImgs
+            imgList: tempFilePathsImgs,
+            imgFileList: tempFilePathsFiles
           })
         },
         fail: function () {
@@ -88,20 +92,21 @@ Component({
     deleteImg: function (e) {
       var _this = this;
       var imgList = _this.data.imgList;
+      var imgFileList = _this.data.imgFileList;
       var index = e.currentTarget.dataset.index; //获取当前点击图片下标
       wx.showModal({
         title: '提示',
         content: '确认要删除该图片吗?',
         success: function (res) {
           if (res.confirm) {
-            console.log("点击确定了")
             imgList.splice(index, 1);
+            imgFileList.splice(index, 1);
           } else if (res.cancel) {
-            console.log("点击取消了");
             return false
           }
           _this.setData({
-            imgList
+            imgList,
+            imgFileList
           })
         }
       })
@@ -136,7 +141,7 @@ Component({
     actioncnt: function () {
       var _this = this;
       wx.showActionSheet({
-        itemList: ['图片', '视频'],
+        itemList: ['图片'],
         success: function (res) {
           if (res.tapIndex == 0) {
             _this.chooseSource()

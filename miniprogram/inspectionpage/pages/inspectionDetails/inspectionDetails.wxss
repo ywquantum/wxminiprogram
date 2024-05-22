@@ -299,3 +299,9 @@
   padding: 7px 5px;
   box-sizing: border-box;
 }
+
+.workBaseLine {
+  width: 100%;
+  margin-top: 10px;
+  font-size: 14px;
+}

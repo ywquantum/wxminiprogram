@@ -13,7 +13,7 @@
       <view class="img-li" bindtap="previewImg">
         <image class="uploading-icon" data-index="{{index}}" src="{{item}}"></image>
       </view>
-      <image class="icon-delete" src="../../images/icon-delete.png" bindtap="deleteImg"></image>
+      <image class="icon-delete" src="../../images/icon-delete.png" data-index="{{index}}" bindtap="deleteImg"></image>
     </view>
   </block>
   <!-- 上传图片/视频 S -->

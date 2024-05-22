@@ -15,6 +15,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    editDatas: null,
     pageStatus: true,
     mode: 'dateTime',
     modeTime: 'time',
@@ -108,8 +109,12 @@ Page({
       wx.setNavigationBarTitle({
         title: '工单编辑',
       })
-      console.log(data);
+      this.setData({
+        pageStatus: false,
+        editDatas: data
+      })
       this.getPortData(data);
+      console.log(data);
     } else {
       this.setData({
         pageStatus: true
@@ -125,8 +130,6 @@ Page({
     let that = this;
 
     requestToken('xunjian/get_inspection_list', 'get', {}).then(res => {
-      console.log(res);
-
       if (res.code == 0) {
         let arr = [];
         for (let k in res.data.departments) {
@@ -134,6 +137,15 @@ Page({
             name: k,
             id: k
           });
+        }
+        let addDatas = []
+        if (datas && datas.starttime) {
+          datas.starttime.forEach(devs => {
+            addDatas.push({
+              timeStart: new Date(`2024-05-01 ${devs[0]}:00`).getTime(),
+              endStart: new Date(`2024-05-01 ${devs[1]}:00`).getTime()
+            })
+          })
         }
         that.setData({
           selectpeopleArr: res.data.departments,
@@ -150,6 +162,40 @@ Page({
 
           event_date_start: datas && new Date(datas.taskcycle[0]).getTime(),
           event_date_end: datas && new Date(datas.taskcycle[1]).getTime(),
+
+          questForstart: datas && new Date(datas.taskcycle[0]).getTime(),
+          questForstartTwo: datas && new Date(datas.taskcycle[1]).getTime(),
+          weekRepeat: (datas && datas.repeat) && [{
+              val: '周一',
+              click: datas.repeat == '重复' || datas.repeat.includes('周一') ? true : false
+            },
+            {
+              val: '周二',
+              click: datas.repeat == '重复' || datas.repeat.includes('周二') ? true : false
+            },
+            {
+              val: '周三',
+              click: datas.repeat == '重复' || datas.repeat.includes('周三') ? true : false
+            },
+            {
+              val: '周四',
+              click: datas.repeat == '重复' || datas.repeat.includes('周四') ? true : false
+            },
+            {
+              val: '周五',
+              click: datas.repeat == '重复' || datas.repeat.includes('周五') ? true : false
+            },
+            {
+              val: '周六',
+              click: datas.repeat == '重复' || datas.repeat.includes('周六') ? true : false
+            },
+            {
+              val: '周天',
+              click: datas.repeat == '重复' || datas.repeat.includes('周天') ? true : false
+            },
+          ],
+          repeatDate: (datas && datas.repeat) && datas.repeat,
+          addNewDateList: addDatas
         })
         that.qySelectPeople(datas ? datas.people[0] : arr[0].id, datas ? datas.people[2] : null)
       } else {
@@ -226,13 +272,17 @@ Page({
         executor_id: executor_id,
         creator_id: app.globalData.userId,
         event_date_end: getTimesOtherType_one(this.data.timeForstartTwo),
+        event_file: [],
+        event_pic: []
       };
       console.log(params);
+      putAjax(params)
     } else {
       let gap = '';
       this.data.addNewDateList.forEach(item => {
         gap += `${getSandM(item.timeStart)}-${getSandM(item.endStart)},`
       })
+      gap = gap.slice(0, gap.length - 1);
 
       let frequ = '';
       let freStatus = '';
@@ -263,8 +313,24 @@ Page({
         event_date_end: getTimesOtherType_one(this.data.questForstartTwo),
         event_frequency: frequ,
         event_time_gap: gap,
+        event_file: [],
+        event_pic: []
       }
       console.log(params);
+      putAjax(params)
+    }
+
+    function putAjax(dev) {
+      if (that.data.pageStatus == false) {
+        dev.id = that.data.editDatas.id;
+        requestToken('xunjian/inspection_query', 'put', dev).then(res => {
+          wx.navigateBack();
+        })
+      } else {
+        requestToken('xunjian/inspection_query', 'post', dev).then(res => {
+          wx.navigateBack();
+        })
+      }
     }
   },
 
@@ -417,7 +483,7 @@ Page({
       _that.data.weekRepeat.forEach(item => {
         if (item.click) {
           boolLength++;
-          boolTrues += `${item.val}/`
+          boolTrues += `${item.val},`
         }
       })
       if (boolLength == 0) {
@@ -455,6 +521,25 @@ Page({
       ['addNewDateList[' + index + ']']: {
         timeStart: new Date('2024-05-01 00:00:00').getTime(),
         endStart: new Date('2024-05-01 00:00:00').getTime(),
+      }
+    })
+  },
+
+  delBtnFun() {
+    let that = this
+    wx.showModal({
+      title: '确认删除?',
+      content: '请确认是否删除该条工单信息?',
+      success: function (res) {
+        if (res.confirm) {
+          requestToken('xunjian/inspection_deleted', 'put', {
+            id: that.data.editDatas.id
+          }).then(res => {
+            wx.navigateBack();
+          })
+        } else if (res.cancel) {
+          return false
+        }
       }
     })
   },

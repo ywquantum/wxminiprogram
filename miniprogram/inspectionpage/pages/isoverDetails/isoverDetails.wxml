@@ -2,6 +2,8 @@
 <view class="overContainer">
   <textExpandsion text="{{ instructions }}"></textExpandsion>
   <view class="inspectionImgBoxLine">
-    <view wx:for="{{ imgs }}" wx:key="index" class="inspection_img"></view>
+    <view wx:for="{{ imgs }}" wx:key="index" class="inspection_img">
+      <image src="{{ item }}" mode="aspectFit" class="imgBox" />
+    </view>
   </view>
 </view>

@@ -2,12 +2,13 @@
 <view class="inspectionDetailsContainer">
   <view class="baseHead">{{ baseTitle }}</view>
   <view class="baseTextContainer">{{ baseContainer }}</view>
-  <view class="threeBox" bindtouchstart="documentTouchStart" bindtouchmove="documentTouchMove" bindtouchend="documentTouchEnd">
+  <view class="workBaseLine">
+    <selectComponents nowId="{{partId}}" nameList="{{partits}}" nowName="{{partId}}" placeholder="请选择值更棒" bind:handleChange="partFruit">
+    </selectComponents>
+  </view>
+  <!-- <view class="threeBox" bindtouchstart="documentTouchStart" bindtouchmove="documentTouchMove" bindtouchend="documentTouchEnd">
     <canvas type="webgl" id="threeId" style="width: 100%; height:100%;" bindtouchstart="touchStart" bindtouchmove="touchMove" bindtouchend="touchEnd" bindtouchcancel="touchCancel" bindlongtap="longTap" bindtap="tap"></canvas>
-  </view>
-  <view class="locationLine">
-    经度：{{ lot }}；纬度：{{ lnt }}
-  </view>
+  </view> -->
 </view>
 <view class="inspectionDetailsBottomBox">
   <view class="bottomText">注意：请在执行巡检任务过程中，保持打开当前界面！</view>
@@ -24,7 +25,7 @@
     <view class="popupContainerBox">
       <view class="popupBox" wx:for="{{popupInner}}" wx:key="index">
         <view class="popupInnerText">{{ item.value }}</view>
-        <view class="popupBtn" catchtap='clickPup'>使用</view>
+        <view class="popupBtn" catchtap='userOldRecord'>使用</view>
       </view>
     </view>
     <view class="popupRecord" catchtap='popupRecordFun'>记录</view>
