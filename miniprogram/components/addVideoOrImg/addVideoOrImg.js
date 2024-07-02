@@ -4,16 +4,19 @@ Component({
   /**
    * 组件的属性列表
    */
-  properties: {
 
+  properties: {
+    imgList: {
+      type: Array,
+      value: [] // 默认值为空数组
+    },
   },
 
   /**
    * 组件的初始数据
    */
   data: {
-    imgList: [], // 上传列表
-    imgFileList: [],
+    // imgList: [], // 上传列表 
     src: "", // 上传视频
   },
 
@@ -59,13 +62,8 @@ Component({
           var imgList = res.tempFilePaths
           let tempFilePathsImg = _this.data.imgList
           var tempFilePathsImgs = tempFilePathsImg.concat(imgList)
-
-          var imgFileList = res.tempFiles
-          let tempFilePathsFile = _this.data.imgFileList
-          var tempFilePathsFiles = tempFilePathsFile.concat(imgFileList)
           _this.setData({
             imgList: tempFilePathsImgs,
-            imgFileList: tempFilePathsFiles
           })
         },
         fail: function () {
@@ -92,7 +90,6 @@ Component({
     deleteImg: function (e) {
       var _this = this;
       var imgList = _this.data.imgList;
-      var imgFileList = _this.data.imgFileList;
       var index = e.currentTarget.dataset.index; //获取当前点击图片下标
       wx.showModal({
         title: '提示',
@@ -100,13 +97,11 @@ Component({
         success: function (res) {
           if (res.confirm) {
             imgList.splice(index, 1);
-            imgFileList.splice(index, 1);
           } else if (res.cancel) {
             return false
           }
           _this.setData({
             imgList,
-            imgFileList
           })
         }
       })

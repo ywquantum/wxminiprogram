@@ -32,9 +32,6 @@ Page({
     const addVideoOrImgComponent = this.selectComponent('#addVideoOrImgComponent');
     if (addVideoOrImgComponent) {
       const imgList = addVideoOrImgComponent.data.imgList;
-      // console.log('子组件的imgList:', imgList);
-      // console.log(this.data.eventDetails);
-      // console.log(this.data.pageData.eventId);
       wx.showModal({
         title: '确认提交?',
         content: '提交后无法再次更改，确认提交吗?',

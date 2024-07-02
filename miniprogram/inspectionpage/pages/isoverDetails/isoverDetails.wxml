@@ -1,9 +1,35 @@
 <!--inspectionpage/pages/isoverDetails/isoverDetails.wxml-->
-<view class="overContainer">
-  <textExpandsion text="{{ instructions }}"></textExpandsion>
+<view class="overContainer" wx:if="{{ !workTypes }}">
+  <view class="yjs_box">{{ allDatas.Instructions }}</view>
+  <view class="yjs_box">截止日期：{{ allDatas.endtime }}</view>
+  <view class="yjs_box">任务执行人：{{ allDatas.zhixing }}</view>
   <view class="inspectionImgBoxLine">
     <view wx:for="{{ imgs }}" wx:key="index" class="inspection_img">
       <image src="{{ item }}" mode="aspectFit" class="imgBox" />
+    </view>
+  </view>
+</view>
+<view class="overContainer" wx:if="{{ workTypes }}">
+  <view class="yjs_box">{{ allDatas.Instructions }}</view>
+  <view class="yjs_box">开始时间：{{ allDatas.time }}</view>
+  <view class="yjs_box">结束时间：{{ allDatas.endtime }}</view>
+  <view class="yjs_box">实际开始时间：{{ realTimes[0] }}</view>
+  <view class="yjs_box">实际结束时间：{{ realTimes[1] }}</view>
+  <view class="yjs_box">巡检人员：{{ allDatas.zhixing }}</view>
+  <view class="inspectionImgBoxLine">
+    <view wx:for="{{ imgs }}" wx:key="index" class="inspection_img">
+      <image src="{{ item }}" mode="aspectFit" class="imgBox" />
+    </view>
+  </view>
+  <view class="problem_box" wx:for="{{record_details}}" wx:key="index">
+    <view class="redPoint"></view>
+    <view class="container_problem">
+      <view class="yjs_box">{{ item.exception_description }}</view>
+      <view class="inspectionImgBoxLine">
+        <view wx:for="{{ item.imgs }}" wx:for-item="tab" wx:key="index" class="inspection_img">
+          <image src="{{ tab }}" mode="aspectFit" class="imgBox" />
+        </view>
+      </view>
     </view>
   </view>
 </view>

@@ -9,9 +9,9 @@
     <view class="inspectionInstructionsLine">
       <textExpandsion text="{{ item.Instructions }}"></textExpandsion>
     </view>
-    <!-- <view class="inspectionImgBoxLine" wx:if="{{ item.imgs && item.imgs.length > 0 }}">
-      <view wx:for="{{ item.imgs }}" wx:key="index" class="inspection_img" wx:for-item="dev">
-        <image src="{{ dev }}" mode="aspectFit" class="inspection_image"></image>
+    <!-- <view class="inspectionImgBoxLine">
+      <view wx:for="{{ item.imgs }}" wx:for-item="tab" wx:key="index" class="inspection_img">
+        <image src="{{ tab }}" mode="aspectFit" class="img_xunjian_box" />
       </view>
     </view> -->
     <view class="inspectionDoubleLine">
@@ -43,9 +43,11 @@
     <view class="inspectionInstructionsLine">
       <textExpandsion text="{{ item.Instructions }}"></textExpandsion>
     </view>
-    <view class="inspectionImgBoxLine">
-      <view wx:for="{{ item.imgs }}" wx:key="index" class="inspection_img"></view>
-    </view>
+    <!-- <view class="inspectionImgBoxLine">
+      <view wx:for="{{ item.imgs }}" wx:for-item="tab" wx:key="index" class="inspection_img">
+        <image src="{{ tab[1] }}" mode="aspectFit" class="img_xunjian_box" />
+      </view>
+    </view> -->
     <view wx:if="{{ item.type == '巡检工单' }}">
       <view class="workBaseTextMargin">任务周期：</view>
       <view class="workBaseSide">

@@ -14,23 +14,23 @@
   <view class="workBaseLine">
     <textarea class="eventDetailsInput" maxlength="-1" value="{{textContainer}}" bindinput="handleDetails" placeholder="请输入工单内容说明（what、why、how）" />
   </view>
-  <addVideoOrImg></addVideoOrImg>
-
+  <addVideoOrImg imgList="{{ originImgList }}"  id="addVideoOrImgComponent"></addVideoOrImg>
+  
   <view wx:if="{{ workBaseType }}">
     <view class="workBaseLine">截止时间：</view>
     <view class="workTimeList">
-      <time-picker mode="{{mode}}" dateTime="{{ timeForstartTwo }}" placeholder="请选择时间" class="workTimesUpdata" bind:onPickerChange="ptEnd"></time-picker>
+      <time-picker mode="{{mode}}" dateTime="{{ timeForstartTwo }}" placeholder="请选择时间" class="workTimesUpdata" bind:onPickerChange="ptEnd" id="putongGondanTimes"></time-picker>
       <view class="workPointLeft">></view>
     </view>
   </view>
   <view wx:if="{{ !workBaseType }}">
     <view class="workBaseLine">任务周期：</view>
     <view class="workTimeList">
-      <time-picker mode="{{mode}}" dateTime="{{ questForstart }}" placeholder="请选择时间" class="workTimesUpdata" bind:onPickerChange="xjStart"></time-picker>
+      <time-picker mode="{{mode}}" dateTime="{{ questForstart }}" placeholder="请选择时间" class="workTimesUpdata" bind:onPickerChange="xjStart" id="xunjianGondanStartTime"></time-picker>
       <view class="workPointLeft">></view>
     </view>
     <view class="workTimeList">
-      <time-picker mode="{{mode}}" dateTime="{{ questForstartTwo }}" placeholder="请选择时间" class="workTimesUpdata" bind:onPickerChange="xjEnd"></time-picker>
+      <time-picker mode="{{mode}}" dateTime="{{ questForstartTwo }}" placeholder="请选择时间" class="workTimesUpdata" bind:onPickerChange="xjEnd" id="xunjianGondanEndTime"></time-picker>
       <view class="workPointLeft">></view>
     </view>
     <view class="workBaseLine flexJust workBaseBorder" catchtap='clickPup'>

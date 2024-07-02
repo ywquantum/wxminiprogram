@@ -245,8 +245,13 @@ Component({
         }
       }
     },
-    pickerCancel: function (e) {}
+    pickerCancel: function (e) {},
 
+    updateDateTime: function (newDateTime) {
+      this.setData({
+        dateTime: newDateTime
+      });
+    }
   },
 
   lifetimes: {

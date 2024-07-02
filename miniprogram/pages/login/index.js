@@ -1,6 +1,10 @@
 import {
-  request
+  request,
+  requestToken
 } from '../../http/request'
+import {
+  getTimesOtherType,
+} from '../../helpers/index'
 
 const app = getApp();
 
@@ -66,6 +70,10 @@ Page({
     request('login', 'post', {
       phone: phone,
       password: password
+      // phone: '17891911990',
+      // password: 'abcd1234'
+      // phone: '18621109358',
+      // password: '123456789a'
     }).then(res => {
       if (res.data.code != 0) {
         wx.showToast({
@@ -94,9 +102,35 @@ Page({
         //   key: "userId",
         //   data: res.data.data.id
         // })
-        wx.reLaunch({
-          url: '../index/index'
+
+        console.log('登录成功');
+        requestToken(`xunjian/event_stauts?executor_id=${res.data.data.id}`, 'GET', {}).then(res => {
+          if (res.data.length == 0) {
+            wx.reLaunch({
+              url: '../index/index'
+            })
+          } else {
+            let arr = {
+              corporation: res.data[0].event_name,
+              Instructions: res.data[0].event_description,
+              time: getTimesOtherType(res.data[0].event_date_start),
+              endtime: res.data[0].event_date_end && getTimesOtherType(res.data[0].event_date_end),
+              imgs: res.data[0].event_pic && JSON.parse(res.data[0].event_pic),
+              type: res.data[0].event_type == 2 ? "workorder" : "inspection",
+              id: res.data[0].event_id,
+              imgCoolapse: 0,
+              listId: res.data[0].id,
+              originStatus: true
+            }
+            let baseData = JSON.stringify(arr)
+            wx.reLaunch({
+              url: '../../inspectionpage/pages/inspectionDetails/inspectionDetails?baseData=' + encodeURIComponent(baseData)
+            })
+          }
         })
+
+
+
       }
     }).catch(res => {
       wx.showToast({

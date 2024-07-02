@@ -1,3 +1,4 @@
+// export const baseHttpUrl = 'http://121.37.128.61:8000/'
 export const baseHttpUrl = 'https://api.sc-link.cn/'
 const header = {
   'Content-Type': 'multipart/form-data; boundary=boundary'

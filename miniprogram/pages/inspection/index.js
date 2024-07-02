@@ -1,5 +1,6 @@
 import {
-  requestToken
+  requestToken,
+  requestToimgs
 } from '../../http/request'
 import {
   getTimesOtherType,
@@ -7,6 +8,7 @@ import {
   getTimesOtherType_one,
   arrayBufferToBase64
 } from '../../helpers/index'
+const base64 = require('../../libs/base64');
 
 const app = getApp();
 
@@ -19,22 +21,7 @@ Component({
     menuTopVal: 0,
     containerMenuList: 0,
     waitEvent: [],
-    doneEvent: [{
-        corporation: '检查污水池的液位是否正常',
-        Instructions: '1',
-        status: false
-      },
-      {
-        corporation: '检查污水池的液位是否正常',
-        Instructions: '2',
-        status: true
-      },
-      {
-        corporation: '检查污水池的液位是否正常',
-        Instructions: '3',
-        status: true
-      },
-    ],
+    doneEvent: [],
     workorderData: [],
     selectpeopleArr: null,
     activeName: '',
@@ -48,6 +35,24 @@ Component({
 
       this.getPortData();
       this.getDKSdatas();
+
+      // setInterval(() => {
+      //   wx.getLocation({
+      //     type: 'gcj02', // 可以是 'wgs84' 或 'gcj02'
+      //     success: (res) => {
+      //       let obj = {
+      //         position: [res.longitude, res.latitude],
+      //         id: '22222',
+      //         time: parseInt(new Date().getTime() / 1000),
+      //         stick_id: 1
+      //       }
+      //       console.log(obj);
+      //     },
+      //     fail: (err) => {
+      //       console.error("获取位置信息失败", err);
+      //     }
+      //   });
+      // }, 5000);
     },
     moved: function () {},
     detached: function () {}
@@ -90,24 +95,26 @@ Component({
     getDKSdatas() {
       let that = this;
 
-      let str = `xunjian/record_filter?event_type=&page=2&event_department=&executor_id=${app.globalData.userId}&event_overview=1&event_date_start=1715668809&event_date_end=1716273609`
+      that.setData({
+        waitEvent: []
+      })
+      let str = `xunjian/record_applet?event_type=&page=0&event_department=&executor_id=${app.globalData.userId}&event_overview=1&event_date_start=&event_date_end=`
       requestToken(str, 'get', {}).then(res => {
         if (res.code == 0) {
-          let arr = [];
           res.data.inspections.forEach((item, index) => {
-            arr.push({
-              corporation: item.event_name,
-              Instructions: item.event_description,
-              time: getTimesOtherType(item.event_date_start),
-              endtime: item.event_date_end && getTimesOtherType(item.event_date_end),
-              imgs: item.event_pic && JSON.parse(item.event_pic),
-              type: item.event_type == 2 ? "workorder" : "inspection",
-              id: item.event_id,
-              imgCoolapse: index
+            that.setData({
+              waitEvent: that.data.waitEvent.concat({
+                corporation: item.event_name,
+                Instructions: item.event_description,
+                time: getTimesOtherType(item.event_date_start),
+                endtime: item.event_date_end && getTimesOtherType(item.event_date_end),
+                imgs: item.event_pic ? JSON.parse(item.event_pic) : [],
+                type: item.event_type == 2 ? "workorder" : "inspection",
+                id: item.event_id,
+                imgCoolapse: index,
+                listId: item.id
+              })
             })
-          })
-          that.setData({
-            waitEvent: arr
           })
         } else {
           putWarnMsg(res.msg)
@@ -119,11 +126,18 @@ Component({
     getYJSdatas() {
       let that = this;
 
-      let str = `xunjian/record_filter?event_type=&page=2&event_department=&executor_id=${app.globalData.userId}&event_overview=3&event_date_start=1715668809&event_date_end=1716273609`
+      let str = `xunjian/record_applet?event_type=&page=0&event_department=&executor_id=${app.globalData.userId}&event_overview=3&event_date_start=&event_date_end=`
       requestToken(str, 'get', {}).then(res => {
         if (res.code == 0) {
           let arr = [];
           res.data.inspections.forEach((item, index) => {
+            let zhixing;
+            for (let ik in res.data.names) {
+              if (ik == item.executor_id) {
+                zhixing = res.data.names[ik];
+              }
+            }
+
             arr.push({
               corporation: item.event_name,
               Instructions: item.event_description,
@@ -133,7 +147,9 @@ Component({
               type: item.event_type == 2 ? "workorder" : "inspection",
               id: item.event_id,
               status: item.event_status,
-              imgCoolapse: index
+              imgCoolapse: index,
+              event_type: item.event_type,
+              zhixing: zhixing
             })
           })
           that.setData({
@@ -149,14 +165,16 @@ Component({
     getGDlist() {
       let that = this;
 
-      let str = `xunjian/inspection_list_get?event_type=&page=1&event_department=&creator_id=&event_overview=&executor_id=${app.globalData.userId}`
+      that.setData({
+        workorderData: []
+      })
+      let str = `xunjian/inspection_list_get?event_type=&page=0&event_department=&creator_id=&event_overview=&executor_id=${app.globalData.userId}`
       requestToken(str, 'get', {}).then(res => {
         if (res.code == 0) {
-          console.log(res);
-          let arr = [];
+          // console.log(res);
           res.data.inspections.forEach(item => {
-            let startTime = getTimesOtherType_one(item.event_date_start);
-            let endTime = getTimesOtherType_one(item.event_date_end);
+            let startTime = item.event_date_start ? getTimesOtherType_one(item.event_date_start) : '';
+            let endTime = item.event_date_end ? getTimesOtherType_one(item.event_date_end) : '';
             let stime = [];
             if (item.event_type == 2) {
               stime.push(['', endTime])
@@ -181,22 +199,21 @@ Component({
             let humanbeing = [userPart, item.user_position, userName];
             let userStatus = item.event_status == '1' ? '待完成' : item.event_status == '2' ? '进行中' : item.event_status == '3' ? '已完成' : '未处理'
 
-            arr.push({
-              type: item.event_type == 2 ? "普通工单" : "巡检工单",
-              corporation: item.event_name,
-              Instructions: item.event_description,
-              imgs: [],
-              taskcycle: [startTime, endTime],
-              repeat: item.event_frequency,
-              starttime: stime,
-              people: humanbeing,
-              status: userStatus,
-              department: item.event_department,
-              id: item.id,
+            that.setData({
+              workorderData: that.data.workorderData.concat({
+                type: item.event_type == 2 ? "普通工单" : "巡检工单",
+                corporation: item.event_name,
+                Instructions: item.event_description,
+                imgs: item.event_pics,
+                taskcycle: [startTime, endTime],
+                repeat: item.event_frequency,
+                starttime: stime,
+                people: humanbeing,
+                status: userStatus,
+                department: item.event_department,
+                id: item.id,
+              })
             })
-          })
-          that.setData({
-            workorderData: arr
           })
         } else {
           putWarnMsg(res.msg)
@@ -231,9 +248,19 @@ Component({
     },
     startInspection(e) {
       let baseData = JSON.stringify(e.currentTarget.dataset['index'])
-      wx.navigateTo({
-        url: '../../inspectionpage/pages/inspectionDetails/inspectionDetails?baseData=' + encodeURIComponent(baseData)
-      })
+      const currentTime = new Date();
+      const specifiedTime = new Date(this.data.specifiedTime);
+      if (currentTime < specifiedTime) {
+        wx.showToast({
+          title: '巡检时间未到，暂不支持开始巡检',
+          icon: 'none',
+          duration: 2000
+        });
+      } else {
+        wx.navigateTo({
+          url: '../../inspectionpage/pages/inspectionDetails/inspectionDetails?baseData=' + encodeURIComponent(baseData)
+        })
+      }
     },
     startWorkorder(e) {
       let baseData = JSON.stringify(e.currentTarget.dataset['index'])
@@ -253,31 +280,5 @@ Component({
         url: '../../inspectionpage/pages/workEditing/workEditing?baseData=' + encodeURIComponent(baseData)
       })
     },
-    imgOnChange(e) {
-      if (e.detail == '') {
-        this.setData({
-          activeName: e.detail,
-        });
-        return false
-      }
-
-      let that = this
-      this.setData({
-        DWCImgArr: []
-      });
-      let imgs = this.data.waitEvent[e.detail].imgs
-      imgs.forEach(item => {
-        let str = `xunjian/ins_handle_file?handle_file=${item}`
-        requestToken(str, 'get', {}).then(res => {
-          // let base64 = arrayBufferToBase64(res);
-          // that.setData({
-          //   DWCImgArr: that.data.DWCImgArr.concat(base64)
-          // });
-        })
-      })
-      this.setData({
-        activeName: e.detail,
-      });
-    }
   }
 })

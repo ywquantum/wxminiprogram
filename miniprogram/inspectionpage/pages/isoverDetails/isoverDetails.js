@@ -1,6 +1,10 @@
 import {
-  requestToimgs
+  requestToimgs,
+  requestToken
 } from '../../../http/request'
+import {
+  getTimesOtherType
+} from '../../../helpers/index'
 const base64 = require('../../../libs/base64');
 
 Page({
@@ -9,7 +13,11 @@ Page({
    */
   data: {
     instructions: '',
-    imgs: []
+    allDatas: {},
+    imgs: [],
+    workTypes: true,
+    realTimes: [],
+    record_details: [],
   },
 
   /**
@@ -17,9 +25,65 @@ Page({
    */
   onLoad(options) {
     let data = JSON.parse(decodeURIComponent(options.baseData))
+    console.log(data);
+    if (data.event_type == '1') {
+      this.setData({
+        workTypes: true,
+      })
+      // requestToken(`xunjian/history_get?id=46`, 'get', {}).then(res => {
+      requestToken(`xunjian/history_get?id=${data.id}`, 'get', {}).then(res => {
+        console.log(res);
+
+        let start = res.data.main_record.event_date_start && getTimesOtherType(res.data.main_record.event_date_start);
+        let end = res.data.main_record.event_end_actual && getTimesOtherType(res.data.main_record.event_end_actual);
+
+        that.setData({
+          realTimes: [start, end],
+          record_details: [],
+        })
+
+        let indexs = 0;
+        let dataFun = (index) => {
+          if (index >= res.data.record_details.length) return false;
+          let item = res.data.record_details[index];
+
+          let img = JSON.parse(item.event_pic);
+          let picImg = []
+          let promises = img.map(dev => {
+            let str = `xunjian/ins_handle_file?handle_file=${dev}`;
+            return requestToimgs(str, 'get', {}).then(res => {
+              const uint8Array = new Uint8Array(res);
+              const base64Data = 'data:image/png;base64,' + base64.fromByteArray(uint8Array);
+              picImg.push(base64Data);
+            });
+          });
+
+          Promise.all(promises).then(() => {
+            that.setData({
+              record_details: that.data.record_details.concat({
+                imgs: picImg,
+                exception_description: item.exception_description
+              })
+            })
+            dataFun(index + 1);
+          })
+        }
+        if (res.data.record_details.length > 0) {
+          dataFun(indexs)
+        }
+
+        requestToken(`xunjian/insert_inspection_track`, 'get', {}).then(src => {})
+      })
+    } else {
+      this.setData({
+        workTypes: false,
+      })
+    }
+
     this.setData({
+      imgs: [],
       instructions: data.Instructions,
-      imgs: []
+      allDatas: data
     })
     wx.setNavigationBarTitle({
       title: data.corporation

@@ -1,15 +1,68 @@
 // pages/askLeave/askLeave.js
+import {
+  putWarnMsg,
+  getTimestampConversion,
+  getSelfTimes
+} from '../../helpers/index.js'
+import {
+  requestToken,
+} from '../../http/request'
+
+const app = getApp();
+
 Page({
   /**
    * 页面的初始数据
    */
   data: {
-    mode: 'dateTime'
+    // mode: 'dateTime',
+    mode: 'date',
+    startTime: new Date(getTimestampConversion(new Date().getTime())).getTime(),
+    endTime: new Date(getTimestampConversion(new Date().getTime())).getTime(),
+    textName: ''
   },
 
   // 提交当前内容
   pullContainer() {
-    wx.navigateBack();
+    let stime = getSelfTimes(this.data.startTime)
+    let etime = getSelfTimes(this.data.endTime)
+    let that = this
+    wx.showModal({
+      title: '确认请假？',
+      content: '是否确认提交本次请假记录？',
+      success: function (res) {
+        if (res.confirm) {
+          requestToken(`xunjian/event_leave`, 'PUT', {
+            event_description: that.data.textName,
+            event_date_start: stime,
+            event_date_end: etime,
+            executor_id: app.globalData.userId,
+          }).then(res => {
+            wx.navigateBack();
+          }).catch(res => {
+            putWarnMsg(res.msg)
+          })
+        }
+      }
+    })
+  },
+
+  ptEnd(e) {
+    this.setData({
+      endTime: new Date(e.detail.value).getTime()
+    })
+  },
+
+  ptStart(e) {
+    this.setData({
+      startTime: new Date(e.detail.value).getTime()
+    })
+  },
+
+  handleName(e) {
+    this.setData({
+      textName: e.detail.value
+    })
   },
 
   //返回回调函数

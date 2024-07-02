@@ -1,12 +1,16 @@
 // inspectionpage/pages/workEditing/workEditing.js
 import {
-  requestToken
+  requestToken,
+  baseHttpUrl,
+  requestToimgs
 } from '../../../http/request'
 import {
   putWarnMsg,
   getTimesOtherType_one,
   getSandM,
+  processImages
 } from '../../../helpers/index.js'
+const base64 = require('../../../libs/base64');
 
 const app = getApp();
 
@@ -98,6 +102,10 @@ Page({
     btmPeopleits: [],
 
     selectpeopleArr: null,
+
+    originImgList: [],
+    originImgObjs: [],
+    editBaseImg: [],
   },
 
   /**
@@ -115,6 +123,27 @@ Page({
       })
       this.getPortData(data);
       console.log(data);
+      let that = this
+      if (data.imgs && data.imgs.length > 0) {
+        let img = data.imgs
+        let picImg = [];
+        let picObj = [];
+        let promises = img.map(dev => {
+          let str = `xunjian/ins_handle_file?handle_file=${dev}`;
+          return requestToimgs(str, 'get', {}).then(res => {
+            const uint8Array = new Uint8Array(res);
+            const base64Data = 'data:image/png;base64,' + base64.fromByteArray(uint8Array);
+            picImg.push(base64Data);
+            picObj.push([dev, base64Data]);
+          });
+        });
+        Promise.all(promises).then(() => {
+          that.setData({
+            originImgList: picImg,
+            originImgObjs: picObj,
+          });
+        })
+      }
     } else {
       this.setData({
         pageStatus: true
@@ -147,6 +176,12 @@ Page({
             })
           })
         }
+
+        let imgList = [];
+        datas && datas.imgs && datas.imgs.forEach(ty => {
+          imgList.push(ty[1])
+        })
+
         that.setData({
           selectpeopleArr: res.data.departments,
           partits: arr,
@@ -159,6 +194,8 @@ Page({
           btmWZId: datas ? datas.people[1] : '安全员',
           btmPartits: arr,
           btmPartId: datas ? datas.people[0] : arr[0].id,
+
+          editBaseImg: datas ? datas.imgs : [],
 
           event_date_start: datas && new Date(datas.taskcycle[0]).getTime(),
           event_date_end: datas && new Date(datas.taskcycle[1]).getTime(),
@@ -272,8 +309,6 @@ Page({
         executor_id: executor_id,
         creator_id: app.globalData.userId,
         event_date_end: getTimesOtherType_one(this.data.timeForstartTwo),
-        event_file: [],
-        event_pic: []
       };
       console.log(params);
       putAjax(params)
@@ -313,24 +348,212 @@ Page({
         event_date_end: getTimesOtherType_one(this.data.questForstartTwo),
         event_frequency: frequ,
         event_time_gap: gap,
-        event_file: [],
-        event_pic: []
       }
       console.log(params);
       putAjax(params)
     }
 
     function putAjax(dev) {
-      if (that.data.pageStatus == false) {
-        dev.id = that.data.editDatas.id;
-        requestToken('xunjian/inspection_query', 'put', dev).then(res => {
-          wx.navigateBack();
-        })
-      } else {
-        requestToken('xunjian/inspection_query', 'post', dev).then(res => {
-          wx.navigateBack();
-        })
-      }
+      wx.showModal({
+        title: '确认提交？',
+        content: '是否确认提交？',
+        success: function (res) {
+          if (res.confirm) {
+            const addVideoOrImgComponent = that.selectComponent('#addVideoOrImgComponent');
+            const imgList = addVideoOrImgComponent.data.imgList;
+
+            if (that.data.pageStatus == false) {
+              let event_pic = that.data.editBaseImg;
+              let pic_del = [];
+              let event_file = [];
+              imgList.forEach(dv => {
+                if (!dv.includes('data:image/png;base64')) {
+                  event_file.push(dv)
+                }
+              })
+              that.data.originImgObjs.forEach(dv => {
+                let status = false;
+                imgList.forEach((dt) => {
+                  if (dv[1] == dt) {
+                    status = true;
+                  }
+                });
+                if (!status) pic_del.push(dv[0]);
+              })
+
+              dev.id = that.data.editDatas.id;
+              dev.event_pic = JSON.stringify(event_pic);
+              dev.pic_del = JSON.stringify(pic_del);
+              dev.event_file = event_file.length == 0 ? JSON.stringify(event_file) : event_file;
+
+              console.log('此处是提交的所有数据汇总输出：', dev);
+              processImages(imgList)
+                .then(newImageList => {
+                  if (event_file.length == 0) {
+                    requestToken(`xunjian/inspection_app_edit`, 'post', {
+                      ...dev
+                    }).then(res => {
+                      if (res.code == 0) {
+                        wx.showToast({
+                          title: '操作成功',
+                          icon: 'success',
+                          duration: 2000,
+                          complete: function () {
+                            setTimeout(() => {
+                              wx.navigateBack();
+                            }, 2000);
+                          }
+                        });
+                      } else {
+                        wx.showToast({
+                          title: res.message,
+                          icon: 'none'
+                        });
+                      }
+                    })
+                  } else {
+                    async function uploadFilesSequentially(newImageList, callback) {
+                      for (let index = 0; index < newImageList.length; index++) {
+                        const filePath = newImageList[index];
+                        try {
+                          const res = await new Promise((resolve, reject) => {
+                            wx.uploadFile({
+                              url: baseHttpUrl + 'xunjian/inspection_app_edit',
+                              filePath: filePath,
+                              name: 'file',
+                              formData: index == 0 ? {
+                                ...dev
+                              } : index == newImageList.length - 1 ? {
+                                id: dev.id,
+                                last_update: 1
+                              } : {
+                                id: dev.id
+                              },
+                              header: {
+                                'token': app.globalData.userToken
+                              },
+                              success: (res) => {
+                                resolve(res);
+                              },
+                              fail: (err) => {
+                                reject(err);
+                              }
+                            });
+                          });
+                        } catch (err) {
+                          wx.showToast({
+                            title: err,
+                            icon: 'none',
+                            duration: 2000,
+                          });
+                        }
+                      }
+
+                      // 所有文件上传完成后调用回调函数
+                      if (callback && typeof callback === 'function') {
+                        callback();
+                      }
+                    }
+                    uploadFilesSequentially(event_file, () => {
+                      wx.showToast({
+                        title: '操作成功',
+                        icon: 'success',
+                        duration: 2000,
+                        complete: function () {
+                          setTimeout(() => {
+                            wx.navigateBack();
+                          }, 2000);
+                        }
+                      });
+                    });
+                  }
+                })
+            } else {
+              var lastId;
+              processImages(imgList)
+                .then(newImageList => {
+                  if (newImageList.length == 0) {
+                    dev.event_pic = [];
+                    requestToken(`xunjian/inspection_app`, 'POST', {
+                      ...dev
+                    }).then(res => {
+                      if (res.code == 0) {
+                        wx.showToast({
+                          title: '操作成功',
+                          icon: 'success',
+                          duration: 2000,
+                          complete: function () {
+                            setTimeout(() => {
+                              wx.navigateBack();
+                            }, 2000);
+                          }
+                        });
+                      } else {
+                        wx.showToast({
+                          title: res.message,
+                          icon: 'none'
+                        });
+                      }
+                    })
+                  } else {
+                    async function uploadFilesSequentially(newImageList, callback) {
+                      for (let index = 0; index < newImageList.length; index++) {
+                        const filePath = newImageList[index];
+                        try {
+                          const res = await new Promise((resolve, reject) => {
+                            wx.uploadFile({
+                              url: baseHttpUrl + 'xunjian/inspection_app',
+                              filePath: filePath,
+                              name: 'file',
+                              formData: index === 0 ? {
+                                ...dev
+                              } : {
+                                last_id: lastId
+                              },
+                              header: {
+                                'token': app.globalData.userToken
+                              },
+                              success: (res) => {
+                                if (index == 0) lastId = JSON.parse(res.data).last_id;
+                                resolve(res);
+                              },
+                              fail: (err) => {
+                                reject(err);
+                              }
+                            });
+                          });
+                        } catch (err) {
+                          wx.showToast({
+                            title: err,
+                            icon: 'none',
+                            duration: 2000,
+                          });
+                        }
+                      }
+
+                      // 所有文件上传完成后调用回调函数
+                      if (callback && typeof callback === 'function') {
+                        callback();
+                      }
+                    }
+                    uploadFilesSequentially(newImageList, () => {
+                      wx.showToast({
+                        title: '操作成功',
+                        icon: 'success',
+                        duration: 2000,
+                        complete: function () {
+                          setTimeout(() => {
+                            wx.navigateBack();
+                          }, 2000);
+                        }
+                      });
+                    });
+                  }
+                })
+            }
+          }
+        }
+      })
     }
   },
 
@@ -406,21 +629,66 @@ Page({
   },
 
   ptEnd(e) {
-    this.setData({
-      timeForstartTwo: new Date(e.detail.value).getTime()
-    })
+    let selectedDate = new Date(e.detail.value);
+    let today = new Date();
+    if (selectedDate >= today) {
+      this.setData({
+        timeForstartTwo: new Date(e.detail.value).getTime()
+      })
+    } else {
+      let that = this
+      wx.showToast({
+        title: '请选择正确的时间，已调整为当前日期时间',
+        icon: 'none'
+      });
+      let componentRef = this.selectComponent('#putongGondanTimes'); // 替换为你的组件 ID
+      componentRef.updateDateTime(new Date().getTime()); // 更新为当前时间的毫秒数
+      that.setData({
+        timeForstartTwo: new Date().getTime()
+      })
+    }
   },
 
   xjStart(e) {
-    this.setData({
-      questForstart: new Date(e.detail.value).getTime()
-    })
+    let selectedDate = new Date(e.detail.value);
+    let today = new Date();
+    if (selectedDate >= today) {
+      this.setData({
+        questForstart: new Date(e.detail.value).getTime()
+      })
+    } else {
+      let that = this
+      wx.showToast({
+        title: '请选择正确的时间，已调整为当前日期时间',
+        icon: 'none'
+      });
+      let componentRef = this.selectComponent('#xunjianGondanStartTime'); // 替换为你的组件 ID
+      componentRef.updateDateTime(new Date().getTime()); // 更新为当前时间的毫秒数
+      that.setData({
+        questForstart: new Date().getTime()
+      })
+    }
   },
 
-  xjEnd(e) {
-    this.setData({
-      questForstartTwo: new Date(e.detail.value).getTime()
-    })
+  xjEnd(e) { 
+    let selectedDate = new Date(e.detail.value);
+    let today = new Date();
+    if (selectedDate >= today) {
+      this.setData({
+        questForstartTwo: new Date(e.detail.value).getTime()
+      })
+    } else {
+      let that = this
+      wx.showToast({
+        title: '请选择正确的时间，已调整为当前日期时间',
+        icon: 'none'
+      });
+      let componentRef = this.selectComponent('#xunjianGondanEndTime'); // 替换为你的组件 ID
+      componentRef.updateDateTime(new Date().getTime()); // 更新为当前时间的毫秒数
+      that.setData({
+        questForstartTwo: new Date().getTime()
+      })
+    }
   },
 
   qsTimeStart(e) {

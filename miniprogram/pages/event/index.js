@@ -65,22 +65,31 @@ Component({
       })
     },
     startSwitch(e) {
-      let baseData = e.currentTarget.dataset['index']
-      let data = {
-        alarm_id: baseData.eventId,
-      };
-      requestToken(`alarm`, 'POST', data).then(res => {
-        if (res.code == 0) {
-          this.setData({
-            waitEvent: [],
-            doneEvent: []
-          })
-          this.getTableList(1)
-        } else {
-          putWarnMsg(res.msg)
+      let that = this;
+      wx.showModal({
+        title: '确认操作？',
+        content: '点击后事件将变为处理中！',
+        success: function (res) {
+          if (res.confirm) {
+            let baseData = e.currentTarget.dataset['index']
+            let data = {
+              alarm_id: baseData.eventId,
+            };
+            requestToken(`alarm`, 'POST', data).then(res => {
+              if (res.code == 0) {
+                that.setData({
+                  waitEvent: [],
+                  doneEvent: []
+                })
+                that.getTableList(1)
+              } else {
+                putWarnMsg(res.msg)
+              }
+            }).catch(res => {
+              putWarnMsg(res.msg)
+            })
+          }
         }
-      }).catch(res => {
-        putWarnMsg(res.msg)
       })
     },
     getTableList(type) {
