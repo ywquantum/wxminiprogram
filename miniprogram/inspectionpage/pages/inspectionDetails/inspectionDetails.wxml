@@ -27,6 +27,7 @@
     <view class="popupContainerBox">
       <view class="popupBox" wx:for="{{popupInner}}" wx:key="index">
         <view class="popupInnerText">{{ item.value }}</view>
+        <view class="popupDelBtn" data-index="{{ item }}" catchtap='delOldRecord'>删除</view>
         <view class="popupBtn" data-index="{{ item }}" catchtap='userOldRecord'>使用</view>
       </view>
     </view>

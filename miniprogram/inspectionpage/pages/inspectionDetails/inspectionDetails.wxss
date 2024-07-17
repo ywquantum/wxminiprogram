@@ -41,7 +41,7 @@
 
 .bottomText {
   font-size: 13px;
-  color: #D9001B;
+  color: #d9001b;
   width: 100%;
   height: 16px;
   line-height: 16px;
@@ -74,7 +74,7 @@
   width: calc(100% - 100px);
   height: 36px;
   line-height: 36px;
-  background-color: #F2F2F2;
+  background-color: #f2f2f2;
   border-radius: 4px;
   text-align: center;
 }
@@ -102,7 +102,7 @@
 
 .pupContent {
   width: 100%;
-  background: #F6F6F6;
+  background: #f6f6f6;
   position: absolute;
   bottom: 0;
   box-shadow: 0 0 10rpx #333;
@@ -220,17 +220,28 @@
 }
 
 .popupInnerText {
-  width: calc(100% - 88px);
+  width: calc(100% - 145px);
 }
 
 .popupBtn {
   width: 68px;
   height: 32px;
-  background-color: #F2F2F2;
+  background-color: #f2f2f2;
   color: #000000;
   text-align: center;
   line-height: 32px;
   border-radius: 4px;
+}
+
+.popupDelBtn {
+  width: 68px;
+  height: 32px;
+  background-color: #f2f2f2;
+  color: #000000;
+  text-align: center;
+  line-height: 32px;
+  border-radius: 4px;
+  margin-right: 5px;
 }
 
 .popupContainerBox {
@@ -253,7 +264,7 @@
   width: 70%;
   height: 36px;
   line-height: 36px;
-  background-color: #B9B9B9;
+  background-color: #b9b9b9;
   border-radius: 4px;
   text-align: center;
   margin-left: 15%;
@@ -274,7 +285,7 @@
   line-height: 32px;
   text-align: center;
   border-radius: 4px;
-  background-color: #70B603;
+  background-color: #70b603;
   color: #fff;
   margin-right: 3%;
 }
@@ -293,7 +304,7 @@
 
 .detailsInput {
   width: 100%;
-  height: 130px; 
+  height: 130px;
   border: 1px solid #ababab;
   margin-top: 10px;
   padding: 7px 5px;

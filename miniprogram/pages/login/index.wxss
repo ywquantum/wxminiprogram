@@ -17,6 +17,19 @@
   font-weight: 400;
 }
 
+.login_wx_btn2 {
+  width: 85% !important;
+  height: 40px;
+  background-color: #08C060;
+  border-radius: 20px;
+  position: absolute;
+  bottom: calc(env(safe-area-inset-bottom) + 80px);
+  left: 7.5%;
+  font-size: 14px;
+  color: #fff;
+  font-weight: 400;
+}
+
 .passwordInput {
   display: flex;
   margin-top: 20px;

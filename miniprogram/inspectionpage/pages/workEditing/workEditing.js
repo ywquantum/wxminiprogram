@@ -84,20 +84,8 @@ Page({
 
     btmPartId: '',
     btmPartits: [],
-    btmWZId: '安全员',
-    btmWZits: [{
-        name: "安全员",
-        id: "安全员"
-      },
-      {
-        name: "负责人",
-        id: "负责人"
-      },
-      {
-        name: "其他",
-        id: "其他"
-      },
-    ],
+    btmWZId: '',
+    btmWZits: [],
     btmPeopleId: '',
     btmPeopleits: [],
 
@@ -177,12 +165,47 @@ Page({
           })
         }
 
+        let bm = [],
+          bmdata = [];
+        for (let k in res.data.departments) {
+          if (k == arr[0].id) {
+            res.data.departments[k].forEach(item => {
+              bm.push(item.post);
+            })
+          }
+        }
+        bm = [...new Set(bm)];
+        bm.forEach((item) => {
+          bmdata.push({
+            name: item,
+            id: item
+          });
+        });
+
+        // let gwOptions = [];
+        // for (let k in res.data.departments) {
+        //   if (k == arr[0].id) {
+        //     res.data.departments[k].forEach((item) => {
+        //       if (item.post == bmdata[0].id) {
+        //         gwOptions.push({
+        //           name: item.name,
+        //           id: item.id,
+        //         });
+        //       }
+        //     });
+        //   }
+        // }
+
+
         let imgList = [];
         datas && datas.imgs && datas.imgs.forEach(ty => {
           imgList.push(ty[1])
         })
 
         that.setData({
+          // btmPeopleits: gwOptions,
+          // btmPeopleId: datas ? datas.people[2] : gwOptions[0].name,
+          btmWZits: bmdata,
           selectpeopleArr: res.data.departments,
           partits: arr,
           partId: datas ? datas.department : arr[0].id,
@@ -191,7 +214,7 @@ Page({
           textName: datas ? datas.corporation : '',
           textContainer: datas ? datas.Instructions : '',
           timeForstartTwo: datas ? new Date(datas.taskcycle[1]).getTime() : new Date(getTimesOtherType_one(new Date().getTime())).getTime(),
-          btmWZId: datas ? datas.people[1] : '安全员',
+          btmWZId: datas ? datas.people[1] : bmdata[0].id,
           btmPartits: arr,
           btmPartId: datas ? datas.people[0] : arr[0].id,
 
@@ -234,7 +257,7 @@ Page({
           repeatDate: (datas && datas.repeat) && datas.repeat,
           addNewDateList: addDatas
         })
-        that.qySelectPeople(datas ? datas.people[0] : arr[0].id, datas ? datas.people[2] : null)
+        that.qySelectPeople(datas ? datas.people[1] : bmdata[0].id, datas ? datas.people[2] : null)
       } else {
         putWarnMsg(res.msg)
       }
@@ -244,10 +267,28 @@ Page({
   },
 
   popupPartSelect(val) {
+    let bm = [],
+      bmdata = [];
+    for (let k in this.data.selectpeopleArr) {
+      if (k == val.detail.selectId) {
+        this.data.selectpeopleArr[k].forEach(item => {
+          bm.push(item.post);
+        })
+      }
+    }
+    bm = [...new Set(bm)];
+    bm.forEach((item) => {
+      bmdata.push({
+        name: item,
+        id: item
+      });
+    });
     this.setData({
-      btmPartId: val.detail.selectId
+      btmPartId: val.detail.selectId,
+      btmWZits: bmdata,
+      btmWZId: bmdata[0].id
     })
-    this.qySelectPeople(val.detail.selectId)
+    this.qySelectPeople(bmdata[0].id)
   },
 
   popupPositionSelect(val) {
@@ -263,22 +304,23 @@ Page({
   },
 
   qySelectPeople(val, focus = null) {
+    let arr = [];
     for (let k in this.data.selectpeopleArr) {
-      if (k == val) {
-        let arr = [];
+      if (k == this.data.btmPartId) {
         this.data.selectpeopleArr[k].forEach((item) => {
-          arr.push({
-            name: item.name,
-            id: item.id,
-          });
+          if (item.post == val) {
+            arr.push({
+              name: item.name,
+              id: item.id,
+            });
+          }
         });
-
-        this.setData({
-          btmPeopleits: arr,
-          btmPeopleId: focus ? focus : arr[0].name
-        })
       }
     }
+    this.setData({
+      btmPeopleits: arr,
+      btmPeopleId: focus ? focus : arr[0].name
+    })
   },
 
   putBtn() {
@@ -670,7 +712,7 @@ Page({
     }
   },
 
-  xjEnd(e) { 
+  xjEnd(e) {
     let selectedDate = new Date(e.detail.value);
     let today = new Date();
     if (selectedDate >= today) {

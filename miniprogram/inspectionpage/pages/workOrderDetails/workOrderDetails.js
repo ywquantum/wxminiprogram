@@ -106,7 +106,23 @@ Page({
               event_date_start: stime,
               event_description: that.data.textName,
             }).then(res => {
-              wx.navigateBack();
+              if (res.code == 0) {
+                wx.showToast({
+                  title: '操作成功',
+                  icon: 'success',
+                  duration: 2000,
+                  complete: function () {
+                    setTimeout(() => {
+                      wx.navigateBack();
+                    }, 2000);
+                  }
+                });
+              } else {
+                wx.showToast({
+                  title: res.message,
+                  icon: 'none'
+                });
+              }
             }).catch(res => {
               putWarnMsg(res.msg)
             })
@@ -142,7 +158,16 @@ Page({
             });
             Promise.all(uploadTasks)
               .then(results => {
-                wx.navigateBack();
+                wx.showToast({
+                  title: '操作成功',
+                  icon: 'success',
+                  duration: 2000,
+                  complete: function () {
+                    setTimeout(() => {
+                      wx.navigateBack();
+                    }, 2000);
+                  }
+                });
               })
               .catch(error => {});
           }

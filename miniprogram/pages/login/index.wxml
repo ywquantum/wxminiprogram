@@ -1,10 +1,22 @@
 <view class="login_center_text">中新智慧园区</view>
 
-<view wx:if="{{!logoingType}}" class="passwordInput">
+<view wx:if="{{logoingType == 1}}" class="passwordInput">
   <view>密码：</view>
   <input type="text" placeholder="请输入密码" bindinput="inputChange" />
 </view>
+<button wx:if="{{logoingType == 1}}" bindtap="buttonClicked" class="login_wx_btn2">登录</button>
+<button wx:if="{{logoingType == 1}}" bindtap="backAdmin" class="login_wx_btn">返回</button>
 
-<button wx:if="{{!logoingType}}" bindtap="buttonClicked" class="login_wx_btn">登录</button>
+<view wx:if="{{logoingType == 2}}" class="passwordInput">
+  <view>账号：</view>
+  <input type="text" placeholder="请输入账号" bindinput="inputUsering" />
+</view>
+<view wx:if="{{logoingType == 2}}" class="passwordInput">
+  <view>密码：</view>
+  <input type="text" placeholder="请输入密码" bindinput="inputChange" />
+</view>
+<button wx:if="{{logoingType == 2}}" bindtap="buttonClicked" class="login_wx_btn2">登录</button>
+<button wx:if="{{logoingType == 2}}" bindtap="backAdmin" class="login_wx_btn">返回</button>
 
-<button wx:if="{{logoingType}}" open-type='getPhoneNumber' bindgetphonenumber="getPhoneNumber" class="login_wx_btn">获取手机号</button>
+<button wx:if="{{logoingType == 0}}" bindtap="checkPut" class="login_wx_btn2">账号密码登录</button>
+<button wx:if="{{logoingType == 0}}" open-type='getPhoneNumber' bindgetphonenumber="getPhoneNumber" class="login_wx_btn">获取手机号</button>
